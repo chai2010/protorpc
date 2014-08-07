@@ -1,6 +1,6 @@
 protorpc
 ========
 
-Google Protocol Protobufs RPC for Go and C++
+PkgDoc: [http://godoc.org/github.com/chai2010/protorpc](http://godoc.org/github.com/chai2010/protorpc)
 
-[https://code.google.com/p/protorpc/](https://code.google.com/p/protorpc/)
+Report bugs to <chaishushan@gmail.com>.
