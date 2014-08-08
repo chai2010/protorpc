@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// //+build ignore
-
 package protorpc
 
 import (
@@ -218,7 +216,7 @@ func testArithClientAsync(t *testing.T, client *rpc.Client) {
 		got := calls[i].Reply.(*msg.ArithResponse).GetC()
 		expected := callInfoList[i].reply.GetC()
 		if got != expected {
-			t.Fatalf(`%d: expected %v, Got = %v`,
+			t.Fatalf(`%v: expected %v, Got = %v`,
 				callInfoList[i].method, got, expected,
 			)
 		}
