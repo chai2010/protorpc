@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package protorpc
+package protorpc_test
 
 import (
 	"errors"
@@ -13,9 +13,7 @@ import (
 	"time"
 
 	"code.google.com/p/goprotobuf/proto"
-
-	// can not import xxx.pb with rpc stub here,
-	// because it will cause import cycle.
+	"github.com/chai2010/protorpc"
 	msg "github.com/chai2010/protorpc/internal/message.pb"
 )
 
@@ -63,7 +61,7 @@ func TestAll(t *testing.T) {
 	if err != nil {
 		t.Fatalf(`net.Dial("tcp", "127.0.0.1:1414"): %v`, err)
 	}
-	client := rpc.NewClientWithCodec(NewClientCodec(conn))
+	client := rpc.NewClientWithCodec(protorpc.NewClientCodec(conn))
 	defer client.Close()
 
 	testArithClient(t, client)
@@ -92,7 +90,7 @@ func listenAndServeArithAndEchoService(network, addr string) error {
 				log.Printf("clients.Accept(): %v\n", err)
 				continue
 			}
-			go srv.ServeCodec(NewServerCodec(conn))
+			go srv.ServeCodec(protorpc.NewServerCodec(conn))
 		}
 	}()
 	return nil
