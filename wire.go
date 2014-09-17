@@ -11,7 +11,7 @@ import (
 
 	"code.google.com/p/goprotobuf/proto"
 	"code.google.com/p/snappy-go/snappy"
-	wire "github.com/chai2010/protorpc/wire.pb"
+	wire "github.com/chai2010/protorpc/internal/wire.pb"
 )
 
 func writeRequest(w io.Writer, id uint64, method string, request proto.Message) error {

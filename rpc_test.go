@@ -16,7 +16,7 @@ import (
 
 	// can not import xxx.pb with rpc stub here,
 	// because it will cause import cycle.
-	msg "github.com/chai2010/protorpc/message.pb"
+	msg "github.com/chai2010/protorpc/internal/message.pb"
 )
 
 type Arith int

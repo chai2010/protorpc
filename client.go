@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"code.google.com/p/goprotobuf/proto"
-	wire "github.com/chai2010/protorpc/wire.pb"
+	wire "github.com/chai2010/protorpc/internal/wire.pb"
 )
 
 type clientCodec struct {
