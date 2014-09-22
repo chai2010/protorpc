@@ -9,7 +9,7 @@ Install
 =======
 
 1. `go get github.com/chai2010/protorpc`
-2. `go get code.google.com/p/protorpc/protoc-gen-go`
+2. `go get github.com/chai2010/protorpc/protoc-gen-go`
 3. `go run hello.go`
 
 Example

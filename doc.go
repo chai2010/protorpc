@@ -13,8 +13,8 @@ you must be running version 2.3 or higher.
 
 Finally run
 
-	go get code.google.com/p/protorpc
-	go get code.google.com/p/protorpc/protoc-gen-go
+	go get github.com/chai2010/protorpc
+	go get github.com/chai2010/protorpc/protoc-gen-go
 
 to install the support library and protocol compiler.
 
@@ -100,9 +100,10 @@ Then it can make a remote call with stub:
 
 More example:
 
-	go test code.google.com/p/protorpc/service.pb
+	go test github.com/chai2010/protorpc/internal/service.pb
 
-It's very simple to use "Protobuf-RPC" with "protoc-gen-go" tool.
-Try it out.
+Report bugs to <chaishushan@gmail.com>.
+
+Thanks!
 */
 package protorpc
