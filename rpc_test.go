@@ -49,14 +49,12 @@ func (t *Echo) Echo(args *msg.EchoRequest, reply *msg.EchoResponse) error {
 	return nil
 }
 
-func init() {
+func TestInternalMessagePkg(t *testing.T) {
 	err := listenAndServeArithAndEchoService("tcp", ":1414")
 	if err != nil {
 		log.Fatalf("listenAndServeArithAndEchoService: %v", err)
 	}
-}
 
-func TestAll(t *testing.T) {
 	conn, err := net.Dial("tcp", "127.0.0.1:1414")
 	if err != nil {
 		t.Fatalf(`net.Dial("tcp", "127.0.0.1:1414"): %v`, err)
@@ -67,7 +65,7 @@ func TestAll(t *testing.T) {
 	testArithClient(t, client)
 	testEchoClient(t, client)
 
-	//testArithClientAsync(t, client)
+	testArithClientAsync(t, client)
 	testEchoClientAsync(t, client)
 }
 
