@@ -15,7 +15,7 @@ Install
 Example
 =======
 
-First, Create [echo.proto](https://github.com/chai2010/protorpc/blob/master/internal/service.pb/echo.proto):
+First, create [echo.proto](https://github.com/chai2010/protorpc/blob/master/internal/service.pb/echo.proto):
 
 ```Proto
 package service;
@@ -37,11 +37,10 @@ service EchoService {
 ```
 
 Second, generate [echo.pb.go](https://github.com/chai2010/protorpc/blob/master/internal/service.pb/echo.pb.go)
-from [echo.proto](https://github.com/chai2010/protorpc/blob/master/internal/service.pb/echo.proto).
+from [echo.proto](https://github.com/chai2010/protorpc/blob/master/internal/service.pb/echo.proto) (we can use `go generate` to invoke this command, see [proto.go](https://github.com/chai2010/protorpc/blob/master/internal/service.pb/proto.go)).
 
 	protoc --go_out=. echo.proto
 
-We can use `go generate` to invoke this command, see [proto.go](https://github.com/chai2010/protorpc/blob/master/internal/service.pb/proto.go).
 
 Now, we can use the stub code like this: 
 
