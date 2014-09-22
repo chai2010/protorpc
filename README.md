@@ -17,7 +17,7 @@ Example
 
 First, Create [echo.proto](https://github.com/chai2010/protorpc/blob/master/internal/service.pb/echo.proto):
 
-```Protocol Buffer
+```Proto
 package service;
 
 option cc_generic_services = true; // Generate RPC stub code
