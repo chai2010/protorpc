@@ -10,7 +10,7 @@ import (
 	"io"
 
 	"code.google.com/p/goprotobuf/proto"
-	"code.google.com/p/snappy-go/snappy"
+	"github.com/chai2010/protorpc/internal/snappy"
 	wire "github.com/chai2010/protorpc/internal/wire.pb"
 )
 
