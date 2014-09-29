@@ -9,9 +9,9 @@ import (
 	"hash/crc32"
 	"io"
 
-	"code.google.com/p/goprotobuf/proto"
 	"github.com/chai2010/protorpc/internal/snappy"
 	wire "github.com/chai2010/protorpc/internal/wire.pb"
+	"github.com/chai2010/protorpc/proto"
 )
 
 func writeRequest(w io.Writer, id uint64, method string, request proto.Message) error {

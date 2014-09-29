@@ -10,8 +10,8 @@ import (
 	"net/rpc"
 	"testing"
 
-	"code.google.com/p/goprotobuf/proto"
 	"github.com/chai2010/protorpc"
+	"github.com/chai2010/protorpc/proto"
 )
 
 func init() {

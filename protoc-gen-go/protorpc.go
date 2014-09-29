@@ -10,8 +10,8 @@ import (
 	"strings"
 	"text/template"
 
-	descriptor "code.google.com/p/goprotobuf/protoc-gen-go/descriptor"
-	generator "code.google.com/p/goprotobuf/protoc-gen-go/generator"
+	descriptor "github.com/chai2010/protorpc/protoc-gen-go/descriptor"
+	generator "github.com/chai2010/protorpc/protoc-gen-go/generator"
 )
 
 // option go_generic_services = ???;

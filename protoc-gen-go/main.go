@@ -1,7 +1,7 @@
 // Go support for Protocol Buffers - Google's data interchange format
 //
 // Copyright 2010 The Go Authors.  All rights reserved.
-// http://encoding/protobuf/
+// http://code.google.com/p/goprotobuf/
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -35,13 +35,6 @@
 	This plugin takes no options and the protocol buffer file syntax does
 	not yet define any options for Go, so program does no option evaluation.
 	That may change.
-
-	Examples:
-
-		protoc --go_out=go_generic_services=true:. xxx.proto
-		protoc --go_out=go_generic_services_use_pkg_name=false:. xxx.proto
-		protoc --go_out=optimize_for=speed:. xxx.proto
-		protoc --go_out=??=??,??=??:. xxx.proto
 */
 
 package main
@@ -50,8 +43,8 @@ import (
 	"io/ioutil"
 	"os"
 
-	"code.google.com/p/goprotobuf/proto"
-	"code.google.com/p/goprotobuf/protoc-gen-go/generator"
+	"github.com/chai2010/protorpc/proto"
+	"github.com/chai2010/protorpc/protoc-gen-go/generator"
 )
 
 func main() {

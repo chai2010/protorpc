@@ -4,7 +4,7 @@
 
 package message
 
-import proto "code.google.com/p/goprotobuf/proto"
+import proto "github.com/chai2010/protorpc/proto"
 import math "math"
 
 // Reference imports to suppress errors if they are not otherwise used.

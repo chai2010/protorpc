@@ -12,9 +12,9 @@ import (
 	"testing"
 	"time"
 
-	"code.google.com/p/goprotobuf/proto"
 	"github.com/chai2010/protorpc"
 	msg "github.com/chai2010/protorpc/internal/message.pb"
+	"github.com/chai2010/protorpc/proto"
 )
 
 type Arith int

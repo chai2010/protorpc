@@ -15,7 +15,7 @@ It has these top-level messages:
 */
 package service
 
-import proto "code.google.com/p/goprotobuf/proto"
+import proto "github.com/chai2010/protorpc/proto"
 import math "math"
 
 import "io"

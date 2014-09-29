@@ -12,8 +12,8 @@ import (
 	"sync"
 	"time"
 
-	"code.google.com/p/goprotobuf/proto"
 	wire "github.com/chai2010/protorpc/internal/wire.pb"
+	"github.com/chai2010/protorpc/proto"
 )
 
 type clientCodec struct {
