@@ -10,8 +10,7 @@ import (
 	"fmt"
 	"log"
 
-	"code.google.com/p/goprotobuf/proto"
-
+	"github.com/chai2010/protorpc/proto"
 	service "github.com/chai2010/protorpc/internal/service.pb"
 )
 
