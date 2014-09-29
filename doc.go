@@ -52,7 +52,7 @@ The server calls (for TCP service):
 	import (
 		"errors"
 
-		"code.google.com/p/goprotobuf/proto"
+		"github.com/chai2010/protorpc/proto"
 
 		"./arith.pb"
 	)
