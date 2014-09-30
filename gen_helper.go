@@ -152,41 +152,6 @@ func unpackSourceCode(filename string) {
 				log.Fatalf("unpackSourceCode: io.Copy filed, err = ", err)
 			}
 		}
-		continue
-
-		// skip lua.c/luac.c
-		if strings.HasSuffix(header.Name, "lua.c") {
-			continue
-		}
-		if strings.HasSuffix(header.Name, "luac.c") {
-			continue
-		}
-
-		// unpack .c/.h
-		if strings.HasSuffix(header.Name, ".c") {
-			fw, err := os.Create("z_" + filepath.Base(header.Name))
-			if err != nil {
-				log.Fatalf("unpackSourceCode: os.Create filed, err = ", err)
-			}
-			defer fw.Close()
-
-			_, err = io.Copy(fw, trReader)
-			if err != nil {
-				log.Fatalf("unpackSourceCode: io.Copy filed, err = ", err)
-			}
-		}
-		if strings.HasSuffix(header.Name, ".h") {
-			fw, err := os.Create("include/" + filepath.Base(header.Name))
-			if err != nil {
-				log.Fatalf("unpackSourceCode: os.Create filed, err = ", err)
-			}
-			defer fw.Close()
-
-			_, err = io.Copy(fw, trReader)
-			if err != nil {
-				log.Fatalf("unpackSourceCode: io.Copy filed, err = ", err)
-			}
-		}
 	}
 }
 
