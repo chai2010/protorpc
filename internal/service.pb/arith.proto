@@ -4,8 +4,6 @@
 
 package service;
 
-option cc_generic_services = true;
-
 message ArithRequest {
 	optional int32 a = 1;
 	optional int32 b = 2;

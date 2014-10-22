@@ -14,10 +14,10 @@ import (
 	generator "github.com/chai2010/protorpc/protoc-gen-go/generator"
 )
 
-// option go_generic_services = ???;
+// option go_generic_services = ???; // defaut is true
 const go_generic_services = "go_generic_services"
 
-// pkg name as prefix of service name?
+// pkg name as prefix of service name? // defaut is false
 const go_generic_services_use_pkg_name = "go_generic_services_use_pkg_name"
 
 // servicePlugin produce the Service interface.
@@ -96,11 +96,8 @@ func (p *servicePlugin) getGenericServicesOptions(
 		}
 	}
 
-	// try proto file option last
-	if file.GetOptions().GetCcGenericServices() {
-		return true
-	}
-	return false
+	// default is ture
+	return true
 }
 
 func (p *servicePlugin) getGenericServicesOptionsUsePkgName(

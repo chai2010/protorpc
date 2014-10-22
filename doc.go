@@ -22,9 +22,6 @@ Here is a simple proto file("arith.pb/arith.proto"):
 
 	package arith;
 
-	// go use cc_generic_services option
-	option cc_generic_services = true;
-
 	message ArithRequest {
 		optional int32 a = 1;
 		optional int32 b = 2;

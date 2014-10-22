@@ -20,8 +20,6 @@ First, create [echo.proto](https://github.com/chai2010/protorpc/blob/master/inte
 ```Proto
 package service;
 
-option cc_generic_services = true; // Generate RPC stub code
-
 message EchoRequest {
 	optional string msg = 1;
 }
