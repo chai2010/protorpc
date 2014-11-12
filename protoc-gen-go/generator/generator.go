@@ -51,7 +51,8 @@ import (
 	"unicode/utf8"
 
 	"github.com/chai2010/protorpc/proto"
-	descriptor "github.com/chai2010/protorpc/protoc-gen-go/descriptor"
+
+	"github.com/chai2010/protorpc/protoc-gen-go/descriptor"
 	plugin "github.com/chai2010/protorpc/protoc-gen-go/plugin"
 )
 
@@ -160,13 +161,12 @@ func (e *EnumDescriptor) TypeName() (s []string) {
 // Everything but the last element of the full type name, CamelCased.
 // The values of type Foo.Bar are call Foo_value1... not Foo_Bar_value1... .
 func (e *EnumDescriptor) prefix() string {
-	typeName := e.TypeName()
-	ccPrefix := CamelCaseSlice(typeName[0:len(typeName)-1]) + "_"
 	if e.parent == nil {
 		// If the enum is not part of a message, the prefix is just the type name.
-		ccPrefix = CamelCase(*e.Name) + "_"
+		return CamelCase(*e.Name) + "_"
 	}
-	return ccPrefix
+	typeName := e.TypeName()
+	return CamelCaseSlice(typeName[0:len(typeName)-1]) + "_"
 }
 
 // The integer value of the named constant in this enumerated type.
@@ -242,6 +242,7 @@ type FileDescriptor struct {
 	exported map[Object][]symbol
 
 	index int // The index of this file in the list of files to generate code for
+
 }
 
 // PackageName is the package name we'll use in the generated code to refer to this file.
@@ -1268,7 +1269,7 @@ func (g *Generator) generateEnum(enum *EnumDescriptor) {
 //	def= string representation of the default value, if any.
 // The default value must be in a representation that can be used at run-time
 // to generate the default value. Thus bools become 0 and 1, for instance.
-func (g *Generator) goTag(field *descriptor.FieldDescriptorProto, wiretype string) string {
+func (g *Generator) goTag(message *Descriptor, field *descriptor.FieldDescriptorProto, wiretype string) string {
 	optrepreq := ""
 	switch {
 	case isOptional(field):
@@ -1488,7 +1489,7 @@ func (g *Generator) generateMessage(message *Descriptor) {
 		usedNames[fieldName] = true
 		typename, wiretype := g.GoType(message, field)
 		jsonName := *field.Name
-		tag := fmt.Sprintf("protobuf:%s json:%q", g.goTag(field, wiretype), jsonName+",omitempty")
+		tag := fmt.Sprintf("protobuf:%s json:%q", g.goTag(message, field, wiretype), jsonName+",omitempty")
 		fieldNames[field] = fieldName
 		fieldGetterNames[field] = fieldGetterName
 		g.P(fieldName, "\t", typename, "\t`", tag, "`")
@@ -1522,6 +1523,16 @@ func (g *Generator) generateMessage(message *Descriptor) {
 			g.P("func (m *", ccTypeName, ") Unmarshal(buf []byte) error {")
 			g.In()
 			g.P("return ", g.Pkg["proto"], ".UnmarshalMessageSet(buf, m.ExtensionMap())")
+			g.Out()
+			g.P("}")
+			g.P("func (m *", ccTypeName, ") MarshalJSON() ([]byte, error) {")
+			g.In()
+			g.P("return ", g.Pkg["proto"], ".MarshalMessageSetJSON(m.XXX_extensions)")
+			g.Out()
+			g.P("}")
+			g.P("func (m *", ccTypeName, ") UnmarshalJSON(buf []byte) error {")
+			g.In()
+			g.P("return ", g.Pkg["proto"], ".UnmarshalMessageSetJSON(buf, m.XXX_extensions)")
 			g.Out()
 			g.P("}")
 			g.P("// ensure ", ccTypeName, " satisfies proto.Marshaler and proto.Unmarshaler")
@@ -1743,10 +1754,11 @@ func (g *Generator) generateMessage(message *Descriptor) {
 func (g *Generator) generateExtension(ext *ExtensionDescriptor) {
 	ccTypeName := ext.DescName()
 
-	extendedType := "*" + g.TypeName(g.ObjectNamed(*ext.Extendee))
+	extDesc := g.ObjectNamed(*ext.Extendee).(*Descriptor)
+	extendedType := "*" + g.TypeName(extDesc)
 	field := ext.FieldDescriptorProto
 	fieldType, wireType := g.GoType(ext.parent, field)
-	tag := g.goTag(field, wireType)
+	tag := g.goTag(extDesc, field, wireType)
 	g.RecordTypeUse(*ext.Extendee)
 	if n := ext.FieldDescriptorProto.TypeName; n != nil {
 		// foreign extension type
@@ -1758,8 +1770,10 @@ func (g *Generator) generateExtension(ext *ExtensionDescriptor) {
 	// Special case for proto2 message sets: If this extension is extending
 	// proto2_bridge.MessageSet, and its final name component is "message_set_extension",
 	// then drop that last component.
+	mset := false
 	if extendedType == "*proto2_bridge.MessageSet" && typeName[len(typeName)-1] == "message_set_extension" {
 		typeName = typeName[:len(typeName)-1]
+		mset = true
 	}
 
 	// For text formatting, the package must be exactly what the .proto file declares,
@@ -1780,6 +1794,15 @@ func (g *Generator) generateExtension(ext *ExtensionDescriptor) {
 	g.Out()
 	g.P("}")
 	g.P()
+
+	if mset {
+		// Generate a bit more code to register with message_set.go.
+		g.P("func init() { ")
+		g.In()
+		g.P(g.Pkg["proto"], ".RegisterMessageSetType((", fieldType, ")(nil), ", field.Number, ", \"", extName, "\")")
+		g.Out()
+		g.P("}")
+	}
 
 	g.file.addExport(ext, constOrVarSymbol{ccTypeName, "var", ""})
 }

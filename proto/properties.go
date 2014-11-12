@@ -300,7 +300,7 @@ func (p *Properties) setEncAndDec(typ reflect.Type, lockGetProp bool) {
 
 	switch t1 := typ; t1.Kind() {
 	default:
-		fmt.Fprintf(os.Stderr, "proto: no coders for %T\n", t1)
+		fmt.Fprintf(os.Stderr, "proto: no coders for %v\n", t1)
 
 	case reflect.Ptr:
 		switch t2 := t1.Elem(); t2.Kind() {
@@ -538,7 +538,11 @@ var (
 )
 
 // GetProperties returns the list of properties for the type represented by t.
+// t must represent a generated struct type of a protocol message.
 func GetProperties(t reflect.Type) *StructProperties {
+	if t.Kind() != reflect.Struct {
+		panic("proto: type must have kind struct")
+	}
 	mutex.Lock()
 	sprop := getPropertiesLocked(t)
 	mutex.Unlock()

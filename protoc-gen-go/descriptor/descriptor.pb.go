@@ -27,7 +27,7 @@ It has these top-level messages:
 	UninterpretedOption
 	SourceCodeInfo
 */
-package google_protobuf
+package descriptor
 
 import proto "github.com/chai2010/protorpc/proto"
 import math "math"
