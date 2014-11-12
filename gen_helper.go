@@ -19,6 +19,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -27,7 +28,7 @@ var (
 )
 
 var (
-	targetVersion = `36be16571e14f67e114bb0af619e5de2c1591679`
+	targetVersion = GetGoProtobufTipVersion()
 	targeFilename = `goprotobuf-` + targetVersion[:12] + `.tar.gz`
 	targetURL     = `https://goprotobuf.googlecode.com/archive/` + targetVersion + `.tar.gz`
 )
@@ -66,6 +67,9 @@ func main() {
 	fixAllImportPath("proto")
 	fixAllImportPath("protoc-gen-go")
 
+	// save proto version
+	saveProtoVersion()
+
 	// Done
 	fmt.Println("Done")
 }
@@ -97,12 +101,12 @@ func unpackSourceCode(filename string) {
 
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
-		log.Fatalf("unpackSourceCode: ioutil.ReadFile filed, err = ", err)
+		log.Fatalf("unpackSourceCode: ioutil.ReadFile filed, err = %v", err)
 	}
 
 	gzReader, err := gzip.NewReader(bytes.NewReader(data))
 	if err != nil {
-		log.Fatalf("unpackSourceCode: gzip.NewReader filed, err = ", err)
+		log.Fatalf("unpackSourceCode: gzip.NewReader filed, err = %v", err)
 	}
 	defer gzReader.Close()
 
@@ -111,7 +115,7 @@ func unpackSourceCode(filename string) {
 		header, err := trReader.Next()
 		if err != nil {
 			if err != io.EOF {
-				log.Fatalf("unpackSourceCode: trReader.Next filed, err = ", err)
+				log.Fatalf("unpackSourceCode: trReader.Next filed, err = %v", err)
 			}
 			break
 		}
@@ -127,13 +131,13 @@ func unpackSourceCode(filename string) {
 			os.MkdirAll(path.Dir(name), 0666)
 			fw, err := os.Create(name)
 			if err != nil {
-				log.Fatalf("unpackSourceCode: os.Create filed, err = ", err)
+				log.Fatalf("unpackSourceCode: os.Create filed, err = %v", err)
 			}
 			defer fw.Close()
 
 			_, err = io.Copy(fw, trReader)
 			if err != nil {
-				log.Fatalf("unpackSourceCode: io.Copy filed, err = ", err)
+				log.Fatalf("unpackSourceCode: io.Copy filed, err = %v", err)
 			}
 		}
 
@@ -143,13 +147,13 @@ func unpackSourceCode(filename string) {
 			os.MkdirAll(path.Dir(name), 0666)
 			fw, err := os.Create(name)
 			if err != nil {
-				log.Fatalf("unpackSourceCode: os.Create filed, err = ", err)
+				log.Fatalf("unpackSourceCode: os.Create filed, err = %v", err)
 			}
 			defer fw.Close()
 
 			_, err = io.Copy(fw, trReader)
 			if err != nil {
-				log.Fatalf("unpackSourceCode: io.Copy filed, err = ", err)
+				log.Fatalf("unpackSourceCode: io.Copy filed, err = %v", err)
 			}
 		}
 	}
@@ -197,5 +201,34 @@ func fixImportPath(filename string) {
 		fmt.Printf("convert %s ok\n", filename)
 	} else {
 		fmt.Printf("revert %s ok\n", filename)
+	}
+}
+
+func GetGoProtobufTipVersion() string {
+	resp, err := http.Get("https://code.google.com/p/goprotobuf/source/browse/")
+	if err != nil {
+		log.Fatalf("GetGoProtobufTipTarGzUrl: http.Get failed, %v", err)
+	}
+	defer resp.Body.Close()
+
+	var buf bytes.Buffer
+	if _, err = io.Copy(&buf, resp.Body); err != nil {
+		log.Fatalf("GetGoProtobufTipTarGzUrl: io.Copy failed, %v", err)
+	}
+
+	// href="//goprotobuf.googlecode.com/archive/26b4b5c8a6ec0e0bc5a8d2807c9f42f7d1bb291a.tar.gz" rel="nofollow">tar.gz</a>
+	re := regexp.MustCompile(`href\=\"//goprotobuf.googlecode.com/archive/[0-9a-z]+\.tar\.gz\"`)
+	url := re.FindString(string(buf.Bytes()))
+	if url == "" {
+		log.Fatalf("GetGoProtobufTipTarGzUrl: re.FindString failed")
+	}
+	return url[len(`href="//goprotobuf.googlecode.com/archive/`) : len(url)-len(`.tar.gz"`)]
+}
+
+func saveProtoVersion() {
+	var buf bytes.Buffer
+	fmt.Fprintf(&buf, "goprotobuf: %s\n", targetURL)
+	if err := ioutil.WriteFile("goprotobuf-version.txt", buf.Bytes(), 0666); err != nil {
+		log.Fatal("ioutil.WriteFile: ", err)
 	}
 }
