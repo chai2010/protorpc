@@ -29,7 +29,7 @@ var (
 var (
 	targetVersion = `26b4b5c8a6ec0e0bc5a8d2807c9f42f7d1bb291a`
 	targeFilename = `zz-goprotobuf-` + targetVersion[:12] + `.tar.gz`
-	targetURL     = `https://goprotobuf.googlecode.com/archive/` + targetVersion + `.tar.gz`
+	targetURL     = `http://goprotobuf.googlecode.com/archive/` + targetVersion + `.tar.gz`
 )
 
 var convertMap = [][2]string{
