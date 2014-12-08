@@ -1,1 +1,0 @@
-goprotobuf: https://goprotobuf.googlecode.com/archive/26b4b5c8a6ec0e0bc5a8d2807c9f42f7d1bb291a.tar.gz

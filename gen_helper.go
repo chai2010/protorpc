@@ -27,26 +27,26 @@ var (
 )
 
 var (
-	targetVersion = `26b4b5c8a6ec0e0bc5a8d2807c9f42f7d1bb291a`
-	targeFilename = `zz-goprotobuf-` + targetVersion[:12] + `.tar.gz`
-	targetURL     = `http://goprotobuf.googlecode.com/archive/` + targetVersion + `.tar.gz`
+	targetVersion = `aec3ce103c5571c237126cf8e3e12b58c1af635f`
+	targeFilename = `zz-protobuf-` + targetVersion[:12] + `.tar.gz`
+	targetURL     = `http://github.com/golang/protobuf/archive/` + targetVersion + `.tar.gz`
 )
 
 var convertMap = [][2]string{
 	[2]string{
-		`"code.google.com/p/goprotobuf/proto"`,
+		`"github.com/golang/protobuf/proto"`,
 		`"github.com/chai2010/protorpc/proto"`,
 	},
 	[2]string{
-		`"code.google.com/p/goprotobuf/protoc-gen-go/descriptor"`,
+		`"github.com/golang/protobuf/protoc-gen-go/descriptor"`,
 		`"github.com/chai2010/protorpc/protoc-gen-go/descriptor"`,
 	},
 	[2]string{
-		`"code.google.com/p/goprotobuf/protoc-gen-go/generator"`,
+		`"github.com/golang/protobuf/protoc-gen-go/generator"`,
 		`"github.com/chai2010/protorpc/protoc-gen-go/generator"`,
 	},
 	[2]string{
-		`"code.google.com/p/goprotobuf/protoc-gen-go/plugin"`,
+		`"github.com/golang/protobuf/protoc-gen-go/plugin"`,
 		`"github.com/chai2010/protorpc/protoc-gen-go/plugin"`,
 	},
 }
@@ -218,7 +218,7 @@ func fixImportPath(filename string) {
 func saveProtoVersion() {
 	var buf bytes.Buffer
 	fmt.Fprintf(&buf, "goprotobuf: %s\n", targetURL)
-	if err := ioutil.WriteFile("goprotobuf-version.txt", buf.Bytes(), 0666); err != nil {
+	if err := ioutil.WriteFile("protobuf-version.txt", buf.Bytes(), 0666); err != nil {
 		log.Fatal("ioutil.WriteFile: ", err)
 	}
 }

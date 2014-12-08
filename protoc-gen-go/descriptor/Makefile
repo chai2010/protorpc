@@ -1,7 +1,7 @@
 # Go support for Protocol Buffers - Google's data interchange format
 #
 # Copyright 2010 The Go Authors.  All rights reserved.
-# http://code.google.com/p/goprotobuf/
+# https://github.com/golang/protobuf
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -29,14 +29,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Not stored here, but descriptor.proto is in http://code.google.com/p/protobuf
-# at protobuf-2.5.0/src/google/protobuf/descriptor.proto
+# Not stored here, but descriptor.proto is in https://github.com/google/protobuf/
+# at src/google/protobuf/descriptor.proto
 regenerate:
 	echo WARNING! THIS RULE IS PROBABLY NOT RIGHT FOR YOUR INSTALLATION
-	cd $(HOME)/src/protobuf-2.5.0/src && \
+	cd $(HOME)/src/protobuf/src && \
 	protoc --go_out=. ./google/protobuf/descriptor.proto && \
 	sed -i 's,^package google_protobuf,package descriptor,' google/protobuf/descriptor.pb.go && \
-	cp ./google/protobuf/descriptor.pb.go $(GOPATH)/src/code.google.com/p/goprotobuf/protoc-gen-go/descriptor/descriptor.pb.go
+	cp ./google/protobuf/descriptor.pb.go $(GOPATH)/src/github.com/golang/protobuf/protoc-gen-go/descriptor/descriptor.pb.go
 
 restore:
 	cp descriptor.pb.golden descriptor.pb.go
