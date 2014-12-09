@@ -12,6 +12,8 @@ protorpc
 
 PkgDoc: [http://godoc.org/github.com/chai2010/protorpc](http://godoc.org/github.com/chai2010/protorpc)
 
+C++ Version: [https://github.com/chai2010/protorpc.cxx](https://github.com/chai2010/protorpc.cxx)
+
 Talks: [Go/C++语言Protobuf-RPC简介](http://go-talks.appspot.com/github.com/chai2010/talks/chai2010-protorpc-intro.slide)
 
 Install
