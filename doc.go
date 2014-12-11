@@ -103,4 +103,4 @@ Report bugs to <chaishushan@gmail.com>.
 
 Thanks!
 */
-package protorpc
+package protorpc // import "github.com/chai2010/protorpc"
