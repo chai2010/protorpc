@@ -10,7 +10,8 @@ protorpc
 ╚═╝     ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝       ╚═╝  ╚═╝╚═╝      ╚═════╝
 ```
 
-PkgDoc: [http://godoc.org/github.com/chai2010/protorpc](http://godoc.org/github.com/chai2010/protorpc)
+[![Build Status](https://travis-ci.org/chai2010/protorpc.svg)](https://travis-ci.org/chai2010/protorpc)
+[![GoDoc](https://godoc.org/github.com/chai2010/protorpc?status.svg)](https://godoc.org/github.com/chai2010/protorpc)
 
 C++ Version: [https://github.com/chai2010/protorpc.cxx](https://github.com/chai2010/protorpc.cxx)
 
