@@ -20,6 +20,8 @@ Talks: [Go/C++语言Protobuf-RPC简介](http://go-talks.appspot.com/github.com/c
 Install
 =======
 
+Need install `protoc` at first: http://github.com/google/protobuf/releases
+
 1. `go get github.com/chai2010/protorpc`
 2. `go get github.com/chai2010/protorpc/protoc-gen-go`
 3. `go run hello.go`

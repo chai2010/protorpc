@@ -8,7 +8,7 @@ for the rpc package.
 
 To install it, you must first have Go (version 1) installed
 (see http://golang.org/doc/install). Next, install the standard
-protocol buffer implementation from http://code.google.com/p/protobuf/;
+protocol buffer implementation from http://github.com/google/protobuf/;
 you must be running version 2.3 or higher.
 
 Finally run
