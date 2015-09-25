@@ -11,7 +11,7 @@ import (
 	"testing"
 
 	"github.com/chai2010/protorpc"
-	"github.com/chai2010/protorpc/proto"
+	"github.com/golang/protobuf/proto"
 )
 
 func init() {

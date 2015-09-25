@@ -14,7 +14,7 @@ import (
 
 	"github.com/chai2010/protorpc"
 	msg "github.com/chai2010/protorpc/internal/message.pb"
-	"github.com/chai2010/protorpc/proto"
+	"github.com/golang/protobuf/proto"
 )
 
 type Arith int

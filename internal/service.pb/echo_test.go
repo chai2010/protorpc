@@ -12,7 +12,7 @@ import (
 	"testing"
 	"unicode/utf8"
 
-	"github.com/chai2010/protorpc/proto"
+	"github.com/golang/protobuf/proto"
 )
 
 var (
