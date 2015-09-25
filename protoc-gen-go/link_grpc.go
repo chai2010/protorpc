@@ -31,4 +31,4 @@
 
 package main
 
-import _ "github.com/chai2010/protorpc/protoc-gen-go-new/internal/grpc"
+import _ "github.com/chai2010/protorpc/protoc-gen-go/internal/grpc"
