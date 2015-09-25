@@ -97,6 +97,18 @@ func main() {
 		log.Fatalf("echoClient.EchoTwice: %v", err)
 	}
 	fmt.Println(reply.GetMsg())
+
+	// or use normal client
+	client, err := protorpc.Dial("tcp", `127.0.0.1:9527`)
+	if err != nil {
+		log.Fatalf("protorpc.Dial: %v", err)
+	}
+	defer client.Close()
+
+	echoClient1 := &service.EchoServiceClient{client}
+	echoClient2 := &service.EchoServiceClient{client}
+	echoClient1.EchoTwice(args, reply)
+	echoClient2.EchoTwice(args, reply)
 }
 ```
 
