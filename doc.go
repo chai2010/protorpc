@@ -40,7 +40,7 @@ Here is a simple proto file("arith.pb/arith.proto"):
 
 Then use "protoc-gen-go" to generate "arith.pb.go" file(include rpc stub):
 
-	cd arith.pb && protoc --go_out=. arith.proto
+	cd arith.pb && protoc --go_out=plugins=protorpc:. arith.proto
 
 The server calls (for TCP service):
 
@@ -49,7 +49,7 @@ The server calls (for TCP service):
 	import (
 		"errors"
 
-		"github.com/chai2010/protorpc/proto"
+		"github.com/golang/protobuf/proto"
 
 		"./arith.pb"
 	)

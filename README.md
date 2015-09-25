@@ -49,7 +49,7 @@ service EchoService {
 Second, generate [echo.pb.go](https://github.com/chai2010/protorpc/blob/master/internal/service.pb/echo.pb.go)
 from [echo.proto](https://github.com/chai2010/protorpc/blob/master/internal/service.pb/echo.proto) (we can use `go generate` to invoke this command, see [proto.go](https://github.com/chai2010/protorpc/blob/master/internal/service.pb/proto.go)).
 
-	protoc --go_out=. echo.proto
+	protoc --go_out=plugins=protorpc:. echo.proto
 
 
 Now, we can use the stub code like this: 
@@ -61,8 +61,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/chai2010/protorpc/proto"
 	service "github.com/chai2010/protorpc/internal/service.pb"
+	"github.com/golang/protobuf/proto"
 )
 
 type Echo int
