@@ -33,7 +33,7 @@ message Nested {
 }
 
 message MessageWithMap {
-  map<bool, bytes> byte_mapping = 1;
+	map<bool, bytes> byte_mapping = 1;
 }
 
 service EchoService {
