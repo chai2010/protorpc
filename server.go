@@ -12,7 +12,7 @@ import (
 	"sync"
 
 	wire "github.com/chai2010/protorpc/internal/wire.pb"
-	"github.com/chai2010/protorpc/proto"
+	"github.com/golang/protobuf/proto"
 )
 
 type serverCodec struct {

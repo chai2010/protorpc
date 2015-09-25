@@ -9,9 +9,9 @@ import (
 	"hash/crc32"
 	"io"
 
-	"github.com/chai2010/protorpc/internal/snappy"
 	wire "github.com/chai2010/protorpc/internal/wire.pb"
-	"github.com/chai2010/protorpc/proto"
+	"github.com/golang/protobuf/proto"
+	"github.com/golang/snappy"
 )
 
 func writeRequest(w io.Writer, id uint64, method string, request proto.Message) error {
@@ -26,10 +26,7 @@ func writeRequest(w io.Writer, id uint64, method string, request proto.Message) 
 	}
 
 	// compress serialized proto data
-	compressedPbRequest, err := snappy.Encode(nil, pbRequest)
-	if err != nil {
-		return err
-	}
+	compressedPbRequest := snappy.Encode(nil, pbRequest)
 
 	// generate header
 	header := &wire.RequestHeader{
@@ -127,10 +124,7 @@ func writeResponse(w io.Writer, id uint64, serr string, response proto.Message) 
 	}
 
 	// compress serialized proto data
-	compressedPbResponse, err := snappy.Encode(nil, pbResponse)
-	if err != nil {
-		return err
-	}
+	compressedPbResponse := snappy.Encode(nil, pbResponse)
 
 	// generate header
 	header := &wire.ResponseHeader{

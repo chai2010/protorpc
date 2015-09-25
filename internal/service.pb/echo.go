@@ -5,7 +5,7 @@
 package service
 
 import (
-	"github.com/chai2010/protorpc/proto"
+	"github.com/golang/protobuf/proto"
 )
 
 type Echo int

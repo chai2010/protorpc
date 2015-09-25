@@ -1,1 +1,0 @@
-goprotobuf: http://github.com/golang/protobuf/archive/aec3ce103c5571c237126cf8e3e12b58c1af635f.tar.gz

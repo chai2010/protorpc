@@ -12,10 +12,13 @@ It is generated from these files:
 It has these top-level messages:
 	ArithRequest
 	ArithResponse
+	EchoRequest
+	EchoResponse
 */
 package service
 
-import proto "github.com/chai2010/protorpc/proto"
+import proto "github.com/golang/protobuf/proto"
+import fmt "fmt"
 import math "math"
 
 import "io"
@@ -27,6 +30,7 @@ import protorpc "github.com/chai2010/protorpc"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
+var _ = fmt.Errorf
 var _ = math.Inf
 
 type ArithRequest struct {
@@ -67,9 +71,6 @@ func (m *ArithResponse) GetC() int32 {
 		return *m.C
 	}
 	return 0
-}
-
-func init() {
 }
 
 type ArithService interface {

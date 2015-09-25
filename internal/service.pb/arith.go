@@ -7,7 +7,7 @@ package service
 import (
 	"errors"
 
-	"github.com/chai2010/protorpc/proto"
+	"github.com/golang/protobuf/proto"
 )
 
 type Arith int

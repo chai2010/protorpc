@@ -11,7 +11,7 @@ import (
 	"log"
 
 	service "github.com/chai2010/protorpc/internal/service.pb"
-	"github.com/chai2010/protorpc/proto"
+	"github.com/golang/protobuf/proto"
 )
 
 type Echo int
