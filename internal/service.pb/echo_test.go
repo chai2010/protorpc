@@ -61,7 +61,7 @@ func TestEchoService(t *testing.T) {
 	onceEcho.Do(setupEchoServer)
 
 	addr := fmt.Sprintf("%s:%d", echoHost, echoPort)
-	_, client, err := DialEchoService("tcp", addr)
+	c, err := DialEchoService("tcp", addr)
 	if err != nil {
 		t.Fatalf(
 			`net.Dial("tcp", "%s:%d"): %v`,
@@ -69,9 +69,9 @@ func TestEchoService(t *testing.T) {
 			err,
 		)
 	}
-	defer client.Close()
+	defer c.Close()
 
-	testEchoService(t, client)
+	testEchoService(t, c.Client)
 }
 
 func testEchoService(t *testing.T, client *rpc.Client) {
@@ -113,7 +113,7 @@ func TestClientSyncEcho(t *testing.T) {
 	onceEcho.Do(setupEchoServer)
 
 	addr := fmt.Sprintf("%s:%d", echoHost, echoPort)
-	echoClient, client, err := DialEchoService("tcp", addr)
+	echoClient, err := DialEchoService("tcp", addr)
 	if err != nil {
 		t.Fatalf(
 			`net.Dial("tcp", "%s:%d"): %v`,
@@ -121,7 +121,7 @@ func TestClientSyncEcho(t *testing.T) {
 			err,
 		)
 	}
-	defer client.Close()
+	defer echoClient.Close()
 
 	var args EchoRequest
 	var reply EchoResponse
@@ -157,7 +157,7 @@ func TestClientSyncMassive(t *testing.T) {
 	onceEcho.Do(setupEchoServer)
 
 	addr := fmt.Sprintf("%s:%d", echoHost, echoPort)
-	echoClient, client, err := DialEchoService("tcp", addr)
+	echoClient, err := DialEchoService("tcp", addr)
 	if err != nil {
 		t.Fatalf(
 			`net.Dial("tcp", "%s:%d"): %v`,
@@ -165,7 +165,7 @@ func TestClientSyncMassive(t *testing.T) {
 			err,
 		)
 	}
-	defer client.Close()
+	defer echoClient.Close()
 
 	var args EchoRequest
 	var reply EchoResponse
@@ -207,7 +207,7 @@ func TestClientAsyncEcho(t *testing.T) {
 	onceEcho.Do(setupEchoServer)
 
 	addr := fmt.Sprintf("%s:%d", echoHost, echoPort)
-	_, client, err := DialEchoService("tcp", addr)
+	client, err := DialEchoService("tcp", addr)
 	if err != nil {
 		t.Fatalf(
 			`net.Dial("tcp", "%s:%d"): %v`,
@@ -240,7 +240,7 @@ func TestClientAsyncEchoBatches(t *testing.T) {
 	onceEcho.Do(setupEchoServer)
 
 	addr := fmt.Sprintf("%s:%d", echoHost, echoPort)
-	_, client, err := DialEchoService("tcp", addr)
+	client, err := DialEchoService("tcp", addr)
 	if err != nil {
 		t.Fatalf(
 			`net.Dial("tcp", "%s:%d"): %v`,
@@ -310,7 +310,7 @@ func TestClientAsyncMassive(t *testing.T) {
 	onceEcho.Do(setupEchoServer)
 
 	addr := fmt.Sprintf("%s:%d", echoHost, echoPort)
-	_, client, err := DialEchoService("tcp", addr)
+	client, err := DialEchoService("tcp", addr)
 	if err != nil {
 		t.Fatalf(
 			`net.Dial("tcp", "%s:%d"): %v`,
@@ -346,7 +346,7 @@ func TestClientAsyncMassiveBatches(t *testing.T) {
 	onceEcho.Do(setupEchoServer)
 
 	addr := fmt.Sprintf("%s:%d", echoHost, echoPort)
-	_, client, err := DialEchoService("tcp", addr)
+	client, err := DialEchoService("tcp", addr)
 	if err != nil {
 		t.Fatalf(
 			`net.Dial("tcp", "%s:%d"): %v`,
@@ -422,7 +422,7 @@ func BenchmarkSyncEcho(b *testing.B) {
 	onceEcho.Do(setupEchoServer)
 
 	addr := fmt.Sprintf("%s:%d", echoHost, echoPort)
-	echoClient, client, err := DialEchoService("tcp", addr)
+	echoClient, err := DialEchoService("tcp", addr)
 	if err != nil {
 		b.Fatalf(
 			`net.Dial("tcp", "%s:%d"): %v`,
@@ -430,7 +430,7 @@ func BenchmarkSyncEcho(b *testing.B) {
 			err,
 		)
 	}
-	defer client.Close()
+	defer echoClient.Close()
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -482,7 +482,7 @@ func BenchmarkSyncMassive(b *testing.B) {
 	onceEcho.Do(setupEchoServer)
 
 	addr := fmt.Sprintf("%s:%d", echoHost, echoPort)
-	echoClient, client, err := DialEchoService("tcp", addr)
+	echoClient, err := DialEchoService("tcp", addr)
 	if err != nil {
 		b.Fatalf(
 			`net.Dial("tcp", "%s:%d"): %v`,
@@ -490,7 +490,7 @@ func BenchmarkSyncMassive(b *testing.B) {
 			err,
 		)
 	}
-	defer client.Close()
+	defer echoClient.Close()
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -551,7 +551,7 @@ func BenchmarkAsyncEcho(b *testing.B) {
 	onceEcho.Do(setupEchoServer)
 
 	addr := fmt.Sprintf("%s:%d", echoHost, echoPort)
-	_, client, err := DialEchoService("tcp", addr)
+	client, err := DialEchoService("tcp", addr)
 	if err != nil {
 		b.Fatalf(
 			`net.Dial("tcp", "%s:%d"): %v`,
@@ -624,7 +624,7 @@ func BenchmarkAsyncMassive(b *testing.B) {
 	onceEcho.Do(setupEchoServer)
 
 	addr := fmt.Sprintf("%s:%d", echoHost, echoPort)
-	_, client, err := DialEchoService("tcp", addr)
+	client, err := DialEchoService("tcp", addr)
 	if err != nil {
 		b.Fatalf(
 			`net.Dial("tcp", "%s:%d"): %v`,

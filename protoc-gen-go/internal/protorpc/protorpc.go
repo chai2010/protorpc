@@ -263,32 +263,31 @@ type {{.ServiceName}}Client struct {
 	*rpc.Client
 }
 
-// New{{.ServiceName}}Client returns a {{.ServiceName}} rpc.Client and stub to handle
+// New{{.ServiceName}}Client returns a {{.ServiceName}} stub to handle
 // requests to the set of {{.ServiceName}} at the other end of the connection.
-func New{{.ServiceName}}Client(conn io.ReadWriteCloser) (*{{.ServiceName}}Client, *rpc.Client) {
+func New{{.ServiceName}}Client(conn io.ReadWriteCloser) (*{{.ServiceName}}Client) {
 	c := rpc.NewClientWithCodec(protorpc.NewClientCodec(conn))
-	return &{{.ServiceName}}Client{c}, c
+	return &{{.ServiceName}}Client{c}
 }
 
 {{.MethodList}}
 
 // Dial{{.ServiceName}} connects to an {{.ServiceName}} at the specified network address.
-func Dial{{.ServiceName}}(network, addr string) (*{{.ServiceName}}Client, *rpc.Client, error) {
+func Dial{{.ServiceName}}(network, addr string) (*{{.ServiceName}}Client, error) {
 	c, err := protorpc.Dial(network, addr)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	return &{{.ServiceName}}Client{c}, c, nil
+	return &{{.ServiceName}}Client{c}, nil
 }
 
 // Dial{{.ServiceName}}Timeout connects to an {{.ServiceName}} at the specified network address.
-func Dial{{.ServiceName}}Timeout(network, addr string,
-	timeout time.Duration) (*{{.ServiceName}}Client, *rpc.Client, error) {
+func Dial{{.ServiceName}}Timeout(network, addr string, timeout time.Duration) (*{{.ServiceName}}Client, error) {
 	c, err := protorpc.DialTimeout(network, addr, timeout)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	return &{{.ServiceName}}Client{c}, c, nil
+	return &{{.ServiceName}}Client{c}, nil
 }
 `
 	const clientMethodTmpl = `

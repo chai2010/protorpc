@@ -142,11 +142,11 @@ type ArithServiceClient struct {
 	*rpc.Client
 }
 
-// NewArithServiceClient returns a ArithService rpc.Client and stub to handle
+// NewArithServiceClient returns a ArithService stub to handle
 // requests to the set of ArithService at the other end of the connection.
-func NewArithServiceClient(conn io.ReadWriteCloser) (*ArithServiceClient, *rpc.Client) {
+func NewArithServiceClient(conn io.ReadWriteCloser) *ArithServiceClient {
 	c := rpc.NewClientWithCodec(protorpc.NewClientCodec(conn))
-	return &ArithServiceClient{c}, c
+	return &ArithServiceClient{c}
 }
 
 func (c *ArithServiceClient) Add(in *ArithRequest, out *ArithResponse) error {
@@ -163,20 +163,19 @@ func (c *ArithServiceClient) Error(in *ArithRequest, out *ArithResponse) error {
 }
 
 // DialArithService connects to an ArithService at the specified network address.
-func DialArithService(network, addr string) (*ArithServiceClient, *rpc.Client, error) {
+func DialArithService(network, addr string) (*ArithServiceClient, error) {
 	c, err := protorpc.Dial(network, addr)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	return &ArithServiceClient{c}, c, nil
+	return &ArithServiceClient{c}, nil
 }
 
 // DialArithServiceTimeout connects to an ArithService at the specified network address.
-func DialArithServiceTimeout(network, addr string,
-	timeout time.Duration) (*ArithServiceClient, *rpc.Client, error) {
+func DialArithServiceTimeout(network, addr string, timeout time.Duration) (*ArithServiceClient, error) {
 	c, err := protorpc.DialTimeout(network, addr, timeout)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	return &ArithServiceClient{c}, c, nil
+	return &ArithServiceClient{c}, nil
 }

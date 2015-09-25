@@ -31,7 +31,7 @@ func init() {
 }
 
 func main() {
-	echoClient, _, err := service.DialEchoService("tcp", `127.0.0.1:9527`)
+	echoClient, err := service.DialEchoService("tcp", `127.0.0.1:9527`)
 	if err != nil {
 		log.Fatalf("service.DialEchoService: %v", err)
 	}

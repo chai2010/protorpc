@@ -77,11 +77,11 @@ The server calls (for TCP service):
 At this point, clients can see a service "Arith" with methods "ArithService.Multiply" and
 "ArithService.Divide". To invoke one, a client first dials the server:
 
-	stub, client, err := arith.DialArithService("tcp", "127.0.0.1:1984")
+	stub, err := arith.DialArithService("tcp", "127.0.0.1:1984")
 	if err != nil {
 		log.Fatal(`arith.DialArithService("tcp", "127.0.0.1:1984"):`, err)
 	}
-	defer client.Close()
+	defer stub.Close()
 
 Then it can make a remote call with stub:
 

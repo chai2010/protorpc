@@ -119,11 +119,11 @@ type EchoServiceClient struct {
 	*rpc.Client
 }
 
-// NewEchoServiceClient returns a EchoService rpc.Client and stub to handle
+// NewEchoServiceClient returns a EchoService stub to handle
 // requests to the set of EchoService at the other end of the connection.
-func NewEchoServiceClient(conn io.ReadWriteCloser) (*EchoServiceClient, *rpc.Client) {
+func NewEchoServiceClient(conn io.ReadWriteCloser) *EchoServiceClient {
 	c := rpc.NewClientWithCodec(protorpc.NewClientCodec(conn))
-	return &EchoServiceClient{c}, c
+	return &EchoServiceClient{c}
 }
 
 func (c *EchoServiceClient) Echo(in *EchoRequest, out *EchoResponse) error {
@@ -134,20 +134,19 @@ func (c *EchoServiceClient) EchoTwice(in *EchoRequest, out *EchoResponse) error 
 }
 
 // DialEchoService connects to an EchoService at the specified network address.
-func DialEchoService(network, addr string) (*EchoServiceClient, *rpc.Client, error) {
+func DialEchoService(network, addr string) (*EchoServiceClient, error) {
 	c, err := protorpc.Dial(network, addr)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	return &EchoServiceClient{c}, c, nil
+	return &EchoServiceClient{c}, nil
 }
 
 // DialEchoServiceTimeout connects to an EchoService at the specified network address.
-func DialEchoServiceTimeout(network, addr string,
-	timeout time.Duration) (*EchoServiceClient, *rpc.Client, error) {
+func DialEchoServiceTimeout(network, addr string, timeout time.Duration) (*EchoServiceClient, error) {
 	c, err := protorpc.DialTimeout(network, addr, timeout)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	return &EchoServiceClient{c}, c, nil
+	return &EchoServiceClient{c}, nil
 }
