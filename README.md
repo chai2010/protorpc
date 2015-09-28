@@ -1,5 +1,4 @@
-protorpc
-========
+# protorpc
 
 ```
 ██████╗ ██████╗  ██████╗ ████████╗ ██████╗       ██████╗ ██████╗  ██████╗
@@ -17,17 +16,22 @@ C++ Version: [https://github.com/chai2010/protorpc.cxx](https://github.com/chai2
 
 Talks: [Go/C++语言Protobuf-RPC简介](http://go-talks.appspot.com/github.com/chai2010/talks/chai2010-protorpc-intro.slide)
 
-Install
-=======
+# Install
 
-Need install `protoc` at first: http://github.com/google/protobuf/releases
+Intasll `protorpc` package:
 
 1. `go get github.com/chai2010/protorpc`
-2. `go get github.com/chai2010/protorpc/protoc-gen-go`
-3. `go run hello.go`
+2. `go run hello.go`
 
-Example
-=======
+Install `protoc-gen-go` plugin:
+
+1. instal `protoc` at first: http://github.com/google/protobuf/releases
+2. `go get github.com/chai2010/protorpc/protoc-gen-go`
+3. `go generate github.com/chai2010/protorpc/internal/service.pb`
+4. `go test github.com/chai2010/protorpc/internal/service.pb`
+
+
+# Examples
 
 First, create [echo.proto](https://github.com/chai2010/protorpc/blob/master/internal/service.pb/echo.proto):
 
@@ -54,7 +58,7 @@ from [echo.proto](https://github.com/chai2010/protorpc/blob/master/internal/serv
 	protoc --go_out=plugins=protorpc:. echo.proto
 
 
-Now, we can use the stub code like this: 
+Now, we can use the stub code like this:
 
 ```Go
 package main
@@ -112,8 +116,9 @@ func main() {
 }
 ```
 
-BUGS
-====
+The `proto3` example is: [internal/proto3.pb](internal/proto3.pb).
+
+# BUGS
 
 Report bugs to <chaishushan@gmail.com>.
 
