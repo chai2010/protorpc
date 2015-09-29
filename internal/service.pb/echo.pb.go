@@ -126,11 +126,19 @@ func NewEchoServiceClient(conn io.ReadWriteCloser) *EchoServiceClient {
 	return &EchoServiceClient{c}
 }
 
-func (c *EchoServiceClient) Echo(in *EchoRequest, out *EchoResponse) error {
-	return c.Call("EchoService.Echo", in, out)
+func (c *EchoServiceClient) Echo(in *EchoRequest) (out *EchoResponse, err error) {
+	out = new(EchoResponse)
+	if err = c.Call("EchoService.Echo", in, out); err != nil {
+		return nil, err
+	}
+	return out, nil
 }
-func (c *EchoServiceClient) EchoTwice(in *EchoRequest, out *EchoResponse) error {
-	return c.Call("EchoService.EchoTwice", in, out)
+func (c *EchoServiceClient) EchoTwice(in *EchoRequest) (out *EchoResponse, err error) {
+	out = new(EchoResponse)
+	if err = c.Call("EchoService.EchoTwice", in, out); err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 // DialEchoService connects to an EchoService at the specified network address.

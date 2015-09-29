@@ -25,7 +25,7 @@ func setupArithServer() {
 	go func() {
 		wg.Done()
 
-		addr := fmt.Sprintf(":%d", arithPort)
+		addr := fmt.Sprintf("127.0.0.1:%d", arithPort)
 		err := ListenAndServeArithService("tcp", addr, new(Arith))
 		if err != nil {
 			log.Fatalf("ListenAndServeArithService: %v", err)

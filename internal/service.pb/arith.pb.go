@@ -149,17 +149,33 @@ func NewArithServiceClient(conn io.ReadWriteCloser) *ArithServiceClient {
 	return &ArithServiceClient{c}
 }
 
-func (c *ArithServiceClient) Add(in *ArithRequest, out *ArithResponse) error {
-	return c.Call("ArithService.Add", in, out)
+func (c *ArithServiceClient) Add(in *ArithRequest) (out *ArithResponse, err error) {
+	out = new(ArithResponse)
+	if err = c.Call("ArithService.Add", in, out); err != nil {
+		return nil, err
+	}
+	return out, nil
 }
-func (c *ArithServiceClient) Mul(in *ArithRequest, out *ArithResponse) error {
-	return c.Call("ArithService.Mul", in, out)
+func (c *ArithServiceClient) Mul(in *ArithRequest) (out *ArithResponse, err error) {
+	out = new(ArithResponse)
+	if err = c.Call("ArithService.Mul", in, out); err != nil {
+		return nil, err
+	}
+	return out, nil
 }
-func (c *ArithServiceClient) Div(in *ArithRequest, out *ArithResponse) error {
-	return c.Call("ArithService.Div", in, out)
+func (c *ArithServiceClient) Div(in *ArithRequest) (out *ArithResponse, err error) {
+	out = new(ArithResponse)
+	if err = c.Call("ArithService.Div", in, out); err != nil {
+		return nil, err
+	}
+	return out, nil
 }
-func (c *ArithServiceClient) Error(in *ArithRequest, out *ArithResponse) error {
-	return c.Call("ArithService.Error", in, out)
+func (c *ArithServiceClient) Error(in *ArithRequest) (out *ArithResponse, err error) {
+	out = new(ArithResponse)
+	if err = c.Call("ArithService.Error", in, out); err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 // DialArithService connects to an ArithService at the specified network address.

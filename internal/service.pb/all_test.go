@@ -15,7 +15,7 @@ import (
 )
 
 func init() {
-	err := listenAndServeArithAndEchoService("tcp", ":1984")
+	err := listenAndServeArithAndEchoService("tcp", "127.0.0.1:1984")
 	if err != nil {
 		log.Fatalf("listenAndServeArithAndEchoService: %v", err)
 	}
@@ -129,15 +129,15 @@ func testEchoClient(t *testing.T, client *rpc.Client) {
 	}
 }
 
-func testArithStub(t *testing.T, stub ArithService) {
+func testArithStub(t *testing.T, stub *ArithServiceClient) {
 	var args ArithRequest
-	var reply ArithResponse
+	var reply *ArithResponse
 	var err error
 
 	// Add
 	args.A = proto.Int32(1)
 	args.B = proto.Int32(2)
-	if err = stub.Add(&args, &reply); err != nil {
+	if reply, err = stub.Add(&args); err != nil {
 		t.Fatalf(`stub.Add: %v`, err)
 	}
 	if reply.GetC() != 3 {
@@ -147,7 +147,7 @@ func testArithStub(t *testing.T, stub ArithService) {
 	// Mul
 	args.A = proto.Int32(2)
 	args.B = proto.Int32(3)
-	if err = stub.Mul(&args, &reply); err != nil {
+	if reply, err = stub.Mul(&args); err != nil {
 		t.Fatalf(`stub.Mul: %v`, err)
 	}
 	if reply.GetC() != 6 {
@@ -157,7 +157,7 @@ func testArithStub(t *testing.T, stub ArithService) {
 	// Div
 	args.A = proto.Int32(13)
 	args.B = proto.Int32(5)
-	if err = stub.Div(&args, &reply); err != nil {
+	if reply, err = stub.Div(&args); err != nil {
 		t.Fatalf(`stub.Div: %v`, err)
 	}
 	if reply.GetC() != 2 {
@@ -167,25 +167,25 @@ func testArithStub(t *testing.T, stub ArithService) {
 	// Div zero
 	args.A = proto.Int32(1)
 	args.B = proto.Int32(0)
-	if err = stub.Div(&args, &reply); err.Error() != "divide by zero" {
+	if reply, err = stub.Div(&args); err.Error() != "divide by zero" {
 		t.Fatalf(`stub.Div: expected = "%s", got = "%s"`, "divide by zero", err.Error())
 	}
 
 	// Error
 	args.A = proto.Int32(1)
 	args.B = proto.Int32(2)
-	if err = stub.Error(&args, &reply); err.Error() != "ArithError" {
+	if reply, err = stub.Error(&args); err.Error() != "ArithError" {
 		t.Fatalf(`stub.Error: expected = "%s", got = "%s"`, "ArithError", err.Error())
 	}
 }
-func testEchoStub(t *testing.T, stub EchoService) {
+func testEchoStub(t *testing.T, stub *EchoServiceClient) {
 	var args EchoRequest
-	var reply EchoResponse
+	var reply *EchoResponse
 	var err error
 
 	// EchoService.Echo
 	args.Msg = proto.String("Hello, Protobuf-RPC")
-	if err = stub.Echo(&args, &reply); err != nil {
+	if reply, err = stub.Echo(&args); err != nil {
 		t.Fatalf(`stub.Echo: %v`, err)
 	}
 	if reply.GetMsg() != args.GetMsg() {

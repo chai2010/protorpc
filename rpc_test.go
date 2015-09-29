@@ -50,7 +50,7 @@ func (t *Echo) Echo(args *msg.EchoRequest, reply *msg.EchoResponse) error {
 }
 
 func TestInternalMessagePkg(t *testing.T) {
-	err := listenAndServeArithAndEchoService("tcp", ":1414")
+	err := listenAndServeArithAndEchoService("tcp", "127.0.0.1:1414")
 	if err != nil {
 		log.Fatalf("listenAndServeArithAndEchoService: %v", err)
 	}

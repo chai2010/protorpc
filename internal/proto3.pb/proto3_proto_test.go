@@ -30,7 +30,7 @@ func (p *tEchoService) Echo(in *Message, out *Message) error {
 
 func TestMain(m *testing.M) {
 	go func() {
-		if err := ListenAndServeEchoService("tcp", ":9527", new(tEchoService)); err != nil {
+		if err := ListenAndServeEchoService("tcp", "127.0.0.1:9527", new(tEchoService)); err != nil {
 			log.Fatal(err)
 		}
 	}()
@@ -60,11 +60,11 @@ func TestEchoService(t *testing.T) {
 		},
 	}
 
-	var out Message
-	if err = c.Echo(&in, &out); err != nil {
+	out, err := c.Echo(&in)
+	if err != nil {
 		t.Fatal(err)
 	}
-	if !reflect.DeepEqual(&in, &out) {
+	if !reflect.DeepEqual(&in, out) {
 		t.Fatalf("not euqal, got = %v\n", &out)
 	}
 }

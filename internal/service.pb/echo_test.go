@@ -49,7 +49,7 @@ func setupEchoServer() {
 	go func() {
 		wg.Done()
 
-		addr := fmt.Sprintf(":%d", echoPort)
+		addr := fmt.Sprintf("127.0.0.1:%d", echoPort)
 		err := ListenAndServeEchoService("tcp", addr, new(Echo))
 		if err != nil {
 			log.Fatalf("ListenAndServeEchoService: %v", err)
@@ -124,11 +124,11 @@ func TestClientSyncEcho(t *testing.T) {
 	defer echoClient.Close()
 
 	var args EchoRequest
-	var reply EchoResponse
+	var reply *EchoResponse
 
 	// EchoService.EchoTwice
 	args.Msg = proto.String("abc")
-	err = echoClient.EchoTwice(&args, &reply)
+	reply, err = echoClient.EchoTwice(&args)
 	if err != nil {
 		t.Fatalf(`EchoService.EchoTwice: %v`, err)
 	}
@@ -141,7 +141,7 @@ func TestClientSyncEcho(t *testing.T) {
 
 	// EchoService.EchoTwice
 	args.Msg = proto.String("你好, 世界")
-	err = echoClient.EchoTwice(&args, &reply)
+	reply, err = echoClient.EchoTwice(&args)
 	if err != nil {
 		t.Fatalf(`EchoService.EchoTwice: %v`, err)
 	}
@@ -168,11 +168,11 @@ func TestClientSyncMassive(t *testing.T) {
 	defer echoClient.Close()
 
 	var args EchoRequest
-	var reply EchoResponse
+	var reply *EchoResponse
 
 	// EchoService.EchoTwice
 	args.Msg = proto.String(echoMassiveRequest + "abc")
-	err = echoClient.EchoTwice(&args, &reply)
+	reply, err = echoClient.EchoTwice(&args)
 	if err != nil {
 		t.Fatalf(`EchoService.EchoTwice: %v`, err)
 	}
@@ -188,7 +188,7 @@ func TestClientSyncMassive(t *testing.T) {
 
 	// EchoService.EchoTwice
 	args.Msg = proto.String(echoMassiveRequest + "你好, 世界")
-	err = echoClient.EchoTwice(&args, &reply)
+	reply, err = echoClient.EchoTwice(&args)
 	if err != nil {
 		t.Fatalf(`EchoService.EchoTwice: %v`, err)
 	}
@@ -435,11 +435,11 @@ func BenchmarkSyncEcho(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		var args EchoRequest
-		var reply EchoResponse
+		var reply *EchoResponse
 
 		// EchoService.EchoTwice
 		args.Msg = proto.String("abc")
-		err = echoClient.EchoTwice(&args, &reply)
+		reply, err = echoClient.EchoTwice(&args)
 		if err != nil {
 			b.Fatalf(`EchoService.EchoTwice: %v`, err)
 		}
@@ -452,7 +452,7 @@ func BenchmarkSyncEcho(b *testing.B) {
 
 		// EchoService.EchoTwice
 		args.Msg = proto.String("你好, 世界")
-		err = echoClient.EchoTwice(&args, &reply)
+		reply, err = echoClient.EchoTwice(&args)
 		if err != nil {
 			b.Fatalf(`EchoService.EchoTwice: %v`, err)
 		}
@@ -465,7 +465,7 @@ func BenchmarkSyncEcho(b *testing.B) {
 
 		// EchoService.EchoTwice
 		args.Msg = proto.String("Hello, 世界")
-		err = echoClient.EchoTwice(&args, &reply)
+		reply, err = echoClient.EchoTwice(&args)
 		if err != nil {
 			b.Fatalf(`EchoService.EchoTwice: %v`, err)
 		}
@@ -495,11 +495,11 @@ func BenchmarkSyncMassive(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		var args EchoRequest
-		var reply EchoResponse
+		var reply *EchoResponse
 
 		// EchoService.EchoTwice
 		args.Msg = proto.String(echoMassiveRequest + "abc")
-		err = echoClient.EchoTwice(&args, &reply)
+		reply, err = echoClient.EchoTwice(&args)
 		if err != nil {
 			b.Fatalf(`EchoService.EchoTwice: %v`, err)
 		}
@@ -515,7 +515,7 @@ func BenchmarkSyncMassive(b *testing.B) {
 
 		// EchoService.EchoTwice
 		args.Msg = proto.String(echoMassiveRequest + "你好, 世界")
-		err = echoClient.EchoTwice(&args, &reply)
+		reply, err = echoClient.EchoTwice(&args)
 		if err != nil {
 			b.Fatalf(`EchoService.EchoTwice: %v`, err)
 		}
@@ -531,7 +531,7 @@ func BenchmarkSyncMassive(b *testing.B) {
 
 		// EchoService.EchoTwice
 		args.Msg = proto.String(echoMassiveRequest + "Hello, 世界")
-		err = echoClient.EchoTwice(&args, &reply)
+		reply, err = echoClient.EchoTwice(&args)
 		if err != nil {
 			b.Fatalf(`EchoService.EchoTwice: %v`, err)
 		}
