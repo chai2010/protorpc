@@ -95,8 +95,7 @@ func main() {
 	defer echoClient.Close()
 
 	args := &service.EchoRequest{Msg: proto.String("你好, 世界!")}
-	reply := &service.EchoResponse{}
-	err = echoClient.EchoTwice(args, reply)
+	reply, err := echoClient.EchoTwice(args)
 	if err != nil {
 		log.Fatalf("echoClient.EchoTwice: %v", err)
 	}
@@ -111,8 +110,12 @@ func main() {
 
 	echoClient1 := &service.EchoServiceClient{client}
 	echoClient2 := &service.EchoServiceClient{client}
-	echoClient1.EchoTwice(args, reply)
-	echoClient2.EchoTwice(args, reply)
+	reply, err = echoClient1.EchoTwice(args)
+	reply, err = echoClient2.EchoTwice(args)
+	_, _ = reply, err
+
+	// Output:
+	// 你好, 世界!你好, 世界!
 }
 ```
 

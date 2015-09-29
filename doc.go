@@ -86,11 +86,11 @@ At this point, clients can see a service "Arith" with methods "ArithService.Mult
 Then it can make a remote call with stub:
 
 	var args ArithRequest
-	var reply ArithResponse
 
 	args.A = proto.Int32(7)
 	args.B = proto.Int32(8)
-	if err = stub.Multiply(&args, &reply); err != nil {
+	reply, err := stub.Multiply(&args, &reply)
+	if err != nil {
 		log.Fatal("arith error:", err)
 	}
 	fmt.Printf("Arith: %d*%d=%d", args.GetA(), args.GetB(), reply.GetVal())
