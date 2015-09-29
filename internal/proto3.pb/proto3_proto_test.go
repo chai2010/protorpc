@@ -30,7 +30,7 @@ func (p *tEchoService) Echo(in *Message, out *Message) error {
 
 func TestMain(m *testing.M) {
 	go func() {
-		if err := ListenAndServeEchoService("tcp", "127.0.0.1:9527", new(tEchoService)); err != nil {
+		if err := ListenAndServeEchoService("tcp", "127.0.0.1:3000", new(tEchoService)); err != nil {
 			log.Fatal(err)
 		}
 	}()
@@ -38,7 +38,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestEchoService(t *testing.T) {
-	c, err := DialEchoService("tcp", "127.0.0.1:9527")
+	c, err := DialEchoService("tcp", "127.0.0.1:3000")
 	if err != nil {
 		t.Fatal(err)
 	}
