@@ -127,6 +127,9 @@ func NewEchoServiceClient(conn io.ReadWriteCloser) *EchoServiceClient {
 }
 
 func (c *EchoServiceClient) Echo(in *EchoRequest) (out *EchoResponse, err error) {
+	if in == nil {
+		in = new(EchoRequest)
+	}
 	out = new(EchoResponse)
 	if err = c.Call("EchoService.Echo", in, out); err != nil {
 		return nil, err
@@ -134,6 +137,9 @@ func (c *EchoServiceClient) Echo(in *EchoRequest) (out *EchoResponse, err error)
 	return out, nil
 }
 func (c *EchoServiceClient) EchoTwice(in *EchoRequest) (out *EchoResponse, err error) {
+	if in == nil {
+		in = new(EchoRequest)
+	}
 	out = new(EchoResponse)
 	if err = c.Call("EchoService.EchoTwice", in, out); err != nil {
 		return nil, err

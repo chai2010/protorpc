@@ -150,6 +150,9 @@ func NewArithServiceClient(conn io.ReadWriteCloser) *ArithServiceClient {
 }
 
 func (c *ArithServiceClient) Add(in *ArithRequest) (out *ArithResponse, err error) {
+	if in == nil {
+		in = new(ArithRequest)
+	}
 	out = new(ArithResponse)
 	if err = c.Call("ArithService.Add", in, out); err != nil {
 		return nil, err
@@ -157,6 +160,9 @@ func (c *ArithServiceClient) Add(in *ArithRequest) (out *ArithResponse, err erro
 	return out, nil
 }
 func (c *ArithServiceClient) Mul(in *ArithRequest) (out *ArithResponse, err error) {
+	if in == nil {
+		in = new(ArithRequest)
+	}
 	out = new(ArithResponse)
 	if err = c.Call("ArithService.Mul", in, out); err != nil {
 		return nil, err
@@ -164,6 +170,9 @@ func (c *ArithServiceClient) Mul(in *ArithRequest) (out *ArithResponse, err erro
 	return out, nil
 }
 func (c *ArithServiceClient) Div(in *ArithRequest) (out *ArithResponse, err error) {
+	if in == nil {
+		in = new(ArithRequest)
+	}
 	out = new(ArithResponse)
 	if err = c.Call("ArithService.Div", in, out); err != nil {
 		return nil, err
@@ -171,6 +180,9 @@ func (c *ArithServiceClient) Div(in *ArithRequest) (out *ArithResponse, err erro
 	return out, nil
 }
 func (c *ArithServiceClient) Error(in *ArithRequest) (out *ArithResponse, err error) {
+	if in == nil {
+		in = new(ArithRequest)
+	}
 	out = new(ArithResponse)
 	if err = c.Call("ArithService.Error", in, out); err != nil {
 		return nil, err
