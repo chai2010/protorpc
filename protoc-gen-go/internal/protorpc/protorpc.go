@@ -291,8 +291,12 @@ func Dial{{.ServiceName}}Timeout(network, addr string, timeout time.Duration) (*
 }
 `
 	const clientMethodTmpl = `
-func (c *{{.ServiceName}}Client) {{.MethodName}}(in *{{.ArgsType}}, out *{{.ReplyType}}) error {
-	return c.Call("{{.ServiceRegisterName}}.{{.MethodName}}", in, out)
+func (c *{{.ServiceName}}Client) {{.MethodName}}(in *{{.ArgsType}}) (out *{{.ReplyType}}, err error) {
+	out = new({{.ReplyType}})
+	if err = c.Call("{{.ServiceRegisterName}}.{{.MethodName}}", in, out); err != nil {
+		return nil, err
+	}
+	return out, nil
 }`
 
 	// gen client method list
