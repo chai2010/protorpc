@@ -119,7 +119,7 @@ func main() {
 }
 ```
 
-The `proto3` example is: [internal/proto3.pb](internal/proto3.pb).
+`proto3` example: [internal/proto3.pb](internal/proto3.pb).
 
 # BUGS
 
