@@ -28,12 +28,15 @@ func (p *tEchoService) Echo(in *Message, out *Message) error {
 	return nil
 }
 
-func TestMain(m *testing.M) {
+func init() {
 	go func() {
 		if err := ListenAndServeEchoService("tcp", "127.0.0.1:3000", new(tEchoService)); err != nil {
 			log.Fatal(err)
 		}
 	}()
+}
+
+func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
