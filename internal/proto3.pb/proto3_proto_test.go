@@ -11,6 +11,7 @@ import (
 	"os"
 	"reflect"
 	"testing"
+	"time"
 )
 
 type tEchoService struct {
@@ -28,15 +29,13 @@ func (p *tEchoService) Echo(in *Message, out *Message) error {
 	return nil
 }
 
-func init() {
+func TestMain(m *testing.M) {
 	go func() {
 		if err := ListenAndServeEchoService("tcp", "127.0.0.1:3000", new(tEchoService)); err != nil {
 			log.Fatal(err)
 		}
 	}()
-}
-
-func TestMain(m *testing.M) {
+	time.Sleep(time.Second * 3) // wait for start the server
 	os.Exit(m.Run())
 }
 
