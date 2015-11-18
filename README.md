@@ -18,14 +18,14 @@ Talks: [Go/C++语言Protobuf-RPC简介](http://go-talks.appspot.com/github.com/c
 
 # Install
 
-Intasll `protorpc` package:
+Install `protorpc` package:
 
 1. `go get github.com/chai2010/protorpc`
 2. `go run hello.go`
 
 Install `protoc-gen-go` plugin:
 
-1. instal `protoc` at first: http://github.com/google/protobuf/releases
+1. install `protoc` at first: http://github.com/google/protobuf/releases
 2. `go get github.com/chai2010/protorpc/protoc-gen-go`
 3. `go generate github.com/chai2010/protorpc/internal/service.pb`
 4. `go test github.com/chai2010/protorpc/internal/service.pb`
