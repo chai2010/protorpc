@@ -12,10 +12,9 @@
 [![Build Status](https://travis-ci.org/chai2010/protorpc.svg)](https://travis-ci.org/chai2010/protorpc)
 [![GoDoc](https://godoc.org/github.com/chai2010/protorpc?status.svg)](https://godoc.org/github.com/chai2010/protorpc)
 
-C++ Version(Proto2): [https://github.com/chai2010/protorpc.cxx](https://github.com/chai2010/protorpc.cxx)
-C++ Version(Proto3): [https://github.com/chai2010/protorpc3-cxx](https://github.com/chai2010/protorpc3-cxx)
-
-Talks: [Go/C++语言Protobuf-RPC简介](http://go-talks.appspot.com/github.com/chai2010/talks/chai2010-protorpc-intro.slide)
+- C++ Version(Proto2): [https://github.com/chai2010/protorpc.cxx](https://github.com/chai2010/protorpc.cxx)
+- C++ Version(Proto3): [https://github.com/chai2010/protorpc3-cxx](https://github.com/chai2010/protorpc3-cxx)
+- Talks: [Go/C++语言Protobuf-RPC简介](http://go-talks.appspot.com/github.com/chai2010/talks/chai2010-protorpc-intro.slide)
 
 # Install
 
