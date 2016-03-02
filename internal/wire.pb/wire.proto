@@ -2,53 +2,50 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-syntax = "proto2";
+syntax = "proto3";
 
+package protorpc.wire;
+
+//
 //	protorpc wire format wrapper
-//	
+//
 //	0. Frame Format
 //	len : uvarint64
 //	data: byte[len]
-//	
+//
 //	1. Client Send Request
-//	Send RequestHeader: sendFrame(conn, hdr, len(hdr))
-//	Send Request: sendFrame(conn, body, hdr.snappy_compressed_request_len)
-//	
+//	Send RequestHeader: sendFrame(zsock, hdr, len(hdr))
+//	Send Request: sendFrame(zsock, body, hdr.snappy_compressed_request_len)
+//
 //	2. Server Recv Request
-//	Recv RequestHeader: recvFrame(conn, hdr, max_hdr_len, 0)
-//	Recv Request: recvFrame(conn, body, hdr.snappy_compressed_request_len, 0)
-//	
+//	Recv RequestHeader: recvFrame(zsock, hdr, max_hdr_len, 0)
+//	Recv Request: recvFrame(zsock, body, hdr.snappy_compressed_request_len, 0)
+//
 //	3. Server Send Response
-//	Send ResponseHeader: sendFrame(conn, hdr, len(hdr))
-//	Send Response: sendFrame(conn, body, hdr.snappy_compressed_response_len)
-//	
+//	Send ResponseHeader: sendFrame(zsock, hdr, len(hdr))
+//	Send Response: sendFrame(zsock, body, hdr.snappy_compressed_response_len)
+//
 //	4. Client Recv Response
-//	Recv ResponseHeader: recvFrame(conn, hdr, max_hdr_len, 0)
-//	Recv Response: recvFrame(conn, body, hdr.snappy_compressed_response_len, 0)
-//	
-//	5. Header Size
-//	len(RequestHeader)  < Const.max_header_len.default
-//	len(ResponseHeader) < Const.max_header_len.default
-package google.protobuf.rpc.wire;
-
-message Const {
-	optional uint32 max_header_len = 1 [default = 1024];
-}
+//	Recv ResponseHeader: recvFrame(zsock, hdr, max_hdr_len, 0)
+//	Recv Response: recvFrame(zsock, body, hdr.snappy_compressed_response_len, 0)
+//
 
 message RequestHeader {
-	optional uint64 id = 1;
-	optional string method = 2;
+	uint64 id = 1;
+	string method = 2;
 
-	optional uint32 raw_request_len = 3;
-	optional uint32 snappy_compressed_request_len = 4;
-	optional uint32 checksum = 5;
+	uint32 raw_request_len = 3;
+	uint32 snappy_compressed_request_len = 4;
+	uint32 checksum = 5;
 }
 
 message ResponseHeader {
-	optional uint64 id = 1;
-	optional string error = 2;
+	uint64 id = 1;
+	string error = 2;
 
-	optional uint32 raw_response_len = 3;
-	optional uint32 snappy_compressed_response_len = 4;
-	optional uint32 checksum = 5;
+	uint32 raw_response_len = 3;
+	uint32 snappy_compressed_response_len = 4;
+	uint32 checksum = 5;
+
+	int32  error_code = 6;
 }
