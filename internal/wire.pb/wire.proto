@@ -4,8 +4,6 @@
 
 syntax = "proto3";
 
-package protorpc.wire;
-
 //
 //	protorpc wire format wrapper
 //
@@ -29,6 +27,7 @@ package protorpc.wire;
 //	Recv ResponseHeader: recvFrame(zsock, hdr, max_hdr_len, 0)
 //	Recv Response: recvFrame(zsock, body, hdr.snappy_compressed_response_len, 0)
 //
+package protorpc.wire;
 
 message RequestHeader {
 	uint64 id = 1;

@@ -73,8 +73,8 @@ func (c *clientCodec) ReadResponseHeader(r *rpc.Response) error {
 	}
 
 	c.mutex.Lock()
-	r.Seq = header.GetId()
-	r.Error = header.GetError()
+	r.Seq = header.Id
+	r.Error = header.Error
 	r.ServiceMethod = c.pending[r.Seq]
 	delete(c.pending, r.Seq)
 	c.mutex.Unlock()

@@ -14,6 +14,10 @@ import (
 	"github.com/golang/snappy"
 )
 
+const (
+	kWireMaxHeaderLen = 2 << 10
+)
+
 func writeRequest(w io.Writer, id uint64, method string, request proto.Message) error {
 	// marshal request
 	pbRequest := []byte{}
@@ -30,11 +34,11 @@ func writeRequest(w io.Writer, id uint64, method string, request proto.Message) 
 
 	// generate header
 	header := &wire.RequestHeader{
-		Id:                         proto.Uint64(id),
-		Method:                     proto.String(method),
-		RawRequestLen:              proto.Uint32(uint32(len(pbRequest))),
-		SnappyCompressedRequestLen: proto.Uint32(uint32(len(compressedPbRequest))),
-		Checksum:                   proto.Uint32(crc32.ChecksumIEEE(compressedPbRequest)),
+		Id:                         id,
+		Method:                     method,
+		RawRequestLen:              uint32(len(pbRequest)),
+		SnappyCompressedRequestLen: uint32(len(compressedPbRequest)),
+		Checksum:                   crc32.ChecksumIEEE(compressedPbRequest),
 	}
 
 	// check header size
@@ -42,7 +46,7 @@ func writeRequest(w io.Writer, id uint64, method string, request proto.Message) 
 	if err != err {
 		return err
 	}
-	if uint32(len(pbHeader)) > wire.Default_Const_MaxHeaderLen {
+	if uint32(len(pbHeader)) > kWireMaxHeaderLen {
 		return fmt.Errorf("protorpc.writeRequest: header larger than max_header_len: %d.", len(pbHeader))
 	}
 
@@ -83,7 +87,7 @@ func readRequestBody(r io.Reader, header *wire.RequestHeader, request proto.Mess
 	}
 
 	// checksum
-	if crc32.ChecksumIEEE(compressedPbRequest) != header.GetChecksum() {
+	if crc32.ChecksumIEEE(compressedPbRequest) != header.Checksum {
 		return fmt.Errorf("protorpc.readRequestBody: unexpected checksum.")
 	}
 
@@ -93,7 +97,7 @@ func readRequestBody(r io.Reader, header *wire.RequestHeader, request proto.Mess
 		return err
 	}
 	// check wire header: rawMsgLen
-	if uint32(len(pbRequest)) != header.GetRawRequestLen() {
+	if uint32(len(pbRequest)) != header.RawRequestLen {
 		return fmt.Errorf("protorpc.readRequestBody: Unexcpeted header.RawRequestLen.")
 	}
 
@@ -128,11 +132,11 @@ func writeResponse(w io.Writer, id uint64, serr string, response proto.Message) 
 
 	// generate header
 	header := &wire.ResponseHeader{
-		Id:                          proto.Uint64(id),
-		Error:                       proto.String(serr),
-		RawResponseLen:              proto.Uint32(uint32(len(pbResponse))),
-		SnappyCompressedResponseLen: proto.Uint32(uint32(len(compressedPbResponse))),
-		Checksum:                    proto.Uint32(crc32.ChecksumIEEE(compressedPbResponse)),
+		Id:                          id,
+		Error:                       serr,
+		RawResponseLen:              uint32(len(pbResponse)),
+		SnappyCompressedResponseLen: uint32(len(compressedPbResponse)),
+		Checksum:                    crc32.ChecksumIEEE(compressedPbResponse),
 	}
 
 	// check header size
@@ -140,7 +144,7 @@ func writeResponse(w io.Writer, id uint64, serr string, response proto.Message) 
 	if err != err {
 		return
 	}
-	if uint32(len(pbHeader)) > wire.Default_Const_MaxHeaderLen {
+	if uint32(len(pbHeader)) > kWireMaxHeaderLen {
 		return fmt.Errorf("protorpc.writeResponse: header larger than max_header_len: %d.",
 			len(pbHeader),
 		)
@@ -183,7 +187,7 @@ func readResponseBody(r io.Reader, header *wire.ResponseHeader, response proto.M
 	}
 
 	// checksum
-	if crc32.ChecksumIEEE(compressedPbResponse) != header.GetChecksum() {
+	if crc32.ChecksumIEEE(compressedPbResponse) != header.Checksum {
 		return fmt.Errorf("protorpc.readResponseBody: unexpected checksum.")
 	}
 
@@ -193,7 +197,7 @@ func readResponseBody(r io.Reader, header *wire.ResponseHeader, response proto.M
 		return err
 	}
 	// check wire header: rawMsgLen
-	if uint32(len(pbResponse)) != header.GetRawResponseLen() {
+	if uint32(len(pbResponse)) != header.RawResponseLen {
 		return fmt.Errorf("protorpc.readResponseBody: Unexcpeted header.RawResponseLen.")
 	}
 

@@ -4,4 +4,4 @@
 
 //go:generate protoc --go_out=. wire.proto
 
-package google_protobuf_rpc_wire
+package protorpc_wire
