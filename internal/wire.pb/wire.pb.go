@@ -47,6 +47,26 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+type Const int32
+
+const (
+	Const_ZERO                   Const = 0
+	Const_MAX_REQUEST_HEADER_LEN Const = 1024
+)
+
+var Const_name = map[int32]string{
+	0:    "ZERO",
+	1024: "MAX_REQUEST_HEADER_LEN",
+}
+var Const_value = map[string]int32{
+	"ZERO": 0,
+	"MAX_REQUEST_HEADER_LEN": 1024,
+}
+
+func (x Const) String() string {
+	return proto.EnumName(Const_name, int32(x))
+}
+
 type RequestHeader struct {
 	Id                         uint64 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
 	Method                     string `protobuf:"bytes,2,opt,name=method" json:"method,omitempty"`
@@ -70,3 +90,7 @@ type ResponseHeader struct {
 func (m *ResponseHeader) Reset()         { *m = ResponseHeader{} }
 func (m *ResponseHeader) String() string { return proto.CompactTextString(m) }
 func (*ResponseHeader) ProtoMessage()    {}
+
+func init() {
+	proto.RegisterEnum("protorpc.wire.Const", Const_name, Const_value)
+}

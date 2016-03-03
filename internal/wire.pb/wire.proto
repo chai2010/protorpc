@@ -29,6 +29,11 @@ syntax = "proto3";
 //
 package protorpc.wire;
 
+enum Const {
+	ZERO = 0;
+	MAX_REQUEST_HEADER_LEN = 1024;
+}
+
 message RequestHeader {
 	uint64 id = 1;
 	string method = 2;

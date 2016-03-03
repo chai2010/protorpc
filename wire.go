@@ -14,10 +14,6 @@ import (
 	"github.com/golang/snappy"
 )
 
-const (
-	kWireMaxHeaderLen = 2 << 10
-)
-
 func writeRequest(w io.Writer, id uint64, method string, request proto.Message) error {
 	// marshal request
 	pbRequest := []byte{}
@@ -46,7 +42,7 @@ func writeRequest(w io.Writer, id uint64, method string, request proto.Message) 
 	if err != err {
 		return err
 	}
-	if uint32(len(pbHeader)) > kWireMaxHeaderLen {
+	if len(pbHeader) > int(wire.Const_MAX_REQUEST_HEADER_LEN) {
 		return fmt.Errorf("protorpc.writeRequest: header larger than max_header_len: %d.", len(pbHeader))
 	}
 
@@ -143,11 +139,6 @@ func writeResponse(w io.Writer, id uint64, serr string, response proto.Message) 
 	pbHeader, err := proto.Marshal(header)
 	if err != err {
 		return
-	}
-	if uint32(len(pbHeader)) > kWireMaxHeaderLen {
-		return fmt.Errorf("protorpc.writeResponse: header larger than max_header_len: %d.",
-			len(pbHeader),
-		)
 	}
 
 	// send header (more)
