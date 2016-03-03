@@ -27,8 +27,8 @@ var (
 
 func makeMassive(args string) string {
 	runeLen := utf8.RuneCountInString(args)
-	runeBuf := make([]rune, runeLen*1024*1024*2)
-	for i := 0; i < 1024*1024*2; i++ {
+	runeBuf := make([]rune, runeLen*1024*100)
+	for i := 0; i < 1024*100; i++ {
 		offset := i * runeLen
 		j := 0
 		for _, r := range args {
