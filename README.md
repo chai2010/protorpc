@@ -36,14 +36,16 @@ Install `protoc-gen-go` plugin:
 First, create [echo.proto](https://github.com/chai2010/protorpc/blob/master/internal/service.pb/echo.proto):
 
 ```Proto
+syntax = "proto3";
+
 package service;
 
 message EchoRequest {
-	optional string msg = 1;
+	string msg = 1;
 }
 
 message EchoResponse {
-	optional string msg = 1;
+	string msg = 1;
 }
 
 service EchoService {
@@ -67,19 +69,19 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/chai2010/protorpc"
 	service "github.com/chai2010/protorpc/internal/service.pb"
-	"github.com/golang/protobuf/proto"
 )
 
 type Echo int
 
 func (t *Echo) Echo(args *service.EchoRequest, reply *service.EchoResponse) error {
-	reply.Msg = proto.String(args.GetMsg())
+	reply.Msg = args.Msg
 	return nil
 }
 
 func (t *Echo) EchoTwice(args *service.EchoRequest, reply *service.EchoResponse) error {
-	reply.Msg = proto.String(args.GetMsg() + args.GetMsg())
+	reply.Msg = args.Msg + args.Msg
 	return nil
 }
 
@@ -94,12 +96,12 @@ func main() {
 	}
 	defer echoClient.Close()
 
-	args := &service.EchoRequest{Msg: proto.String("你好, 世界!")}
+	args := &service.EchoRequest{Msg: "你好, 世界!"}
 	reply, err := echoClient.EchoTwice(args)
 	if err != nil {
 		log.Fatalf("echoClient.EchoTwice: %v", err)
 	}
-	fmt.Println(reply.GetMsg())
+	fmt.Println(reply.Msg)
 
 	// or use normal client
 	client, err := protorpc.Dial("tcp", `127.0.0.1:9527`)
@@ -119,7 +121,7 @@ func main() {
 }
 ```
 
-`proto3` example: [internal/proto3.pb](internal/proto3.pb).
+[More examples](internal).
 
 # BUGS
 
