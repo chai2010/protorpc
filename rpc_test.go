@@ -14,27 +14,26 @@ import (
 
 	"github.com/chai2010/protorpc"
 	msg "github.com/chai2010/protorpc/internal/message.pb"
-	"github.com/golang/protobuf/proto"
 )
 
 type Arith int
 
 func (t *Arith) Add(args *msg.ArithRequest, reply *msg.ArithResponse) error {
-	reply.C = proto.Int32(args.GetA() + args.GetB())
-	log.Printf("Arith.Add(%v, %v): %v", args.GetA(), args.GetB(), reply.GetC())
+	reply.C = args.A + args.B
+	log.Printf("Arith.Add(%v, %v): %v", args.A, args.B, reply.C)
 	return nil
 }
 
 func (t *Arith) Mul(args *msg.ArithRequest, reply *msg.ArithResponse) error {
-	reply.C = proto.Int32(args.GetA() * args.GetB())
+	reply.C = args.A * args.B
 	return nil
 }
 
 func (t *Arith) Div(args *msg.ArithRequest, reply *msg.ArithResponse) error {
-	if args.GetB() == 0 {
+	if args.B == 0 {
 		return errors.New("divide by zero")
 	}
-	reply.C = proto.Int32(args.GetA() / args.GetB())
+	reply.C = args.A / args.B
 	return nil
 }
 
@@ -100,45 +99,45 @@ func testArithClient(t *testing.T, client *rpc.Client) {
 	var err error
 
 	// Add
-	args.A = proto.Int32(1)
-	args.B = proto.Int32(2)
+	args.A = 1
+	args.B = 2
 	if err = client.Call("ArithService.Add", &args, &reply); err != nil {
 		t.Fatalf(`arith.Add: %v`, err)
 	}
-	if reply.GetC() != 3 {
-		t.Fatalf(`arith.Add: expected = %d, got = %d`, 3, reply.GetC())
+	if reply.C != 3 {
+		t.Fatalf(`arith.Add: expected = %d, got = %d`, 3, reply.C)
 	}
 
 	// Mul
-	args.A = proto.Int32(2)
-	args.B = proto.Int32(3)
+	args.A = 2
+	args.B = 3
 	if err = client.Call("ArithService.Mul", &args, &reply); err != nil {
 		t.Fatalf(`arith.Mul: %v`, err)
 	}
-	if reply.GetC() != 6 {
-		t.Fatalf(`arith.Mul: expected = %d, got = %d`, 6, reply.GetC())
+	if reply.C != 6 {
+		t.Fatalf(`arith.Mul: expected = %d, got = %d`, 6, reply.C)
 	}
 
 	// Div
-	args.A = proto.Int32(13)
-	args.B = proto.Int32(5)
+	args.A = 13
+	args.B = 5
 	if err = client.Call("ArithService.Div", &args, &reply); err != nil {
 		t.Fatalf(`arith.Div: %v`, err)
 	}
-	if reply.GetC() != 2 {
-		t.Fatalf(`arith.Div: expected = %d, got = %d`, 2, reply.GetC())
+	if reply.C != 2 {
+		t.Fatalf(`arith.Div: expected = %d, got = %d`, 2, reply.C)
 	}
 
 	// Div zero
-	args.A = proto.Int32(1)
-	args.B = proto.Int32(0)
+	args.A = 1
+	args.B = 0
 	if err = client.Call("ArithService.Div", &args, &reply); err.Error() != "divide by zero" {
 		t.Fatalf(`arith.Error: expected = "%s", got = "%s"`, "divide by zero", err.Error())
 	}
 
 	// Error
-	args.A = proto.Int32(1)
-	args.B = proto.Int32(2)
+	args.A = 1
+	args.B = 2
 	if err = client.Call("ArithService.Error", &args, &reply); err.Error() != "ArithError" {
 		t.Fatalf(`arith.Error: expected = "%s", got = "%s"`, "ArithError", err.Error())
 	}
@@ -154,31 +153,31 @@ func testArithClientAsync(t *testing.T, client *rpc.Client) {
 	}{
 		{
 			"ArithService.Add",
-			&msg.ArithRequest{A: proto.Int32(1), B: proto.Int32(2)},
-			&msg.ArithResponse{C: proto.Int32(3)},
+			&msg.ArithRequest{A: 1, B: 2},
+			&msg.ArithResponse{C: 3},
 			nil,
 		},
 		{
 			"ArithService.Mul",
-			&msg.ArithRequest{A: proto.Int32(2), B: proto.Int32(3)},
-			&msg.ArithResponse{C: proto.Int32(6)},
+			&msg.ArithRequest{A: 2, B: 3},
+			&msg.ArithResponse{C: 6},
 			nil,
 		},
 		{
 			"ArithService.Div",
-			&msg.ArithRequest{A: proto.Int32(13), B: proto.Int32(5)},
-			&msg.ArithResponse{C: proto.Int32(2)},
+			&msg.ArithRequest{A: 13, B: 5},
+			&msg.ArithResponse{C: 2},
 			nil,
 		},
 		{
 			"ArithService.Div",
-			&msg.ArithRequest{A: proto.Int32(1), B: proto.Int32(0)},
+			&msg.ArithRequest{A: 1, B: 0},
 			&msg.ArithResponse{},
 			errors.New("divide by zero"),
 		},
 		{
 			"ArithService.Error",
-			&msg.ArithRequest{A: proto.Int32(1), B: proto.Int32(2)},
+			&msg.ArithRequest{A: 1, B: 2},
 			&msg.ArithResponse{},
 			errors.New("ArithError"),
 		},
@@ -209,8 +208,8 @@ func testArithClientAsync(t *testing.T, client *rpc.Client) {
 			continue
 		}
 
-		got := calls[i].Reply.(*msg.ArithResponse).GetC()
-		expected := callInfoList[i].reply.GetC()
+		got := calls[i].Reply.(*msg.ArithResponse).C
+		expected := callInfoList[i].reply.C
 		if got != expected {
 			t.Fatalf(`%v: expected %v, Got = %v`,
 				callInfoList[i].method, got, expected,
@@ -225,18 +224,18 @@ func testEchoClient(t *testing.T, client *rpc.Client) {
 	var err error
 
 	// EchoService.Echo
-	args.Msg = proto.String("Hello, Protobuf-RPC")
+	args.Msg = "Hello, Protobuf-RPC"
 	if err = client.Call("EchoService.Echo", &args, &reply); err != nil {
 		t.Fatalf(`EchoService.Echo: %v`, err)
 	}
-	if reply.GetMsg() != args.GetMsg() {
-		t.Fatalf(`EchoService.Echo: expected = "%s", got = "%s"`, args.GetMsg(), reply.GetMsg())
+	if reply.Msg != args.Msg {
+		t.Fatalf(`EchoService.Echo: expected = "%s", got = "%s"`, args.Msg, reply.Msg)
 	}
 }
 
 func testEchoClientAsync(t *testing.T, client *rpc.Client) {
 	// EchoService.Echo
-	args := &msg.EchoRequest{Msg: proto.String("Hello, Protobuf-RPC")}
+	args := &msg.EchoRequest{Msg: "Hello, Protobuf-RPC"}
 	reply := &msg.EchoResponse{}
 	echoCall := client.Go("EchoService.Echo", args, reply, nil)
 
@@ -248,10 +247,10 @@ func testEchoClientAsync(t *testing.T, client *rpc.Client) {
 	if echoCall.Error != nil {
 		t.Fatalf(`EchoService.Echo: %v`, echoCall.Error)
 	}
-	if echoCall.Reply.(*msg.EchoResponse).GetMsg() != args.GetMsg() {
+	if echoCall.Reply.(*msg.EchoResponse).Msg != args.Msg {
 		t.Fatalf(`EchoService.Echo: expected = "%s", got = "%s"`,
-			args.GetMsg(),
-			echoCall.Reply.(*msg.EchoResponse).GetMsg(),
+			args.Msg,
+			echoCall.Reply.(*msg.EchoResponse).Msg,
 		)
 	}
 }
