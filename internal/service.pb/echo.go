@@ -4,18 +4,14 @@
 
 package service
 
-import (
-	"github.com/golang/protobuf/proto"
-)
-
 type Echo int
 
 func (t *Echo) Echo(args *EchoRequest, reply *EchoResponse) error {
-	reply.Msg = proto.String(args.GetMsg())
+	reply.Msg = args.Msg
 	return nil
 }
 
 func (t *Echo) EchoTwice(args *EchoRequest, reply *EchoResponse) error {
-	reply.Msg = proto.String(args.GetMsg() + args.GetMsg())
+	reply.Msg = args.Msg + args.Msg
 	return nil
 }

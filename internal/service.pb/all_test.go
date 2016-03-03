@@ -11,7 +11,6 @@ import (
 	"testing"
 
 	"github.com/chai2010/protorpc"
-	"github.com/golang/protobuf/proto"
 )
 
 func init() {
@@ -70,45 +69,45 @@ func testArithClient(t *testing.T, client *rpc.Client) {
 	var err error
 
 	// Add
-	args.A = proto.Int32(1)
-	args.B = proto.Int32(2)
+	args.A = 1
+	args.B = 2
 	if err = client.Call("ArithService.Add", &args, &reply); err != nil {
 		t.Fatalf(`arith.Add: %v`, err)
 	}
-	if reply.GetC() != 3 {
-		t.Fatalf(`arith.Add: expected = %d, got = %d`, 3, reply.GetC())
+	if reply.C != 3 {
+		t.Fatalf(`arith.Add: expected = %d, got = %d`, 3, reply.C)
 	}
 
 	// Mul
-	args.A = proto.Int32(2)
-	args.B = proto.Int32(3)
+	args.A = 2
+	args.B = 3
 	if err = client.Call("ArithService.Mul", &args, &reply); err != nil {
 		t.Fatalf(`arith.Mul: %v`, err)
 	}
-	if reply.GetC() != 6 {
-		t.Fatalf(`arith.Mul: expected = %d, got = %d`, 6, reply.GetC())
+	if reply.C != 6 {
+		t.Fatalf(`arith.Mul: expected = %d, got = %d`, 6, reply.C)
 	}
 
 	// Div
-	args.A = proto.Int32(13)
-	args.B = proto.Int32(5)
+	args.A = 13
+	args.B = 5
 	if err = client.Call("ArithService.Div", &args, &reply); err != nil {
 		t.Fatalf(`arith.Div: %v`, err)
 	}
-	if reply.GetC() != 2 {
-		t.Fatalf(`arith.Div: expected = %d, got = %d`, 2, reply.GetC())
+	if reply.C != 2 {
+		t.Fatalf(`arith.Div: expected = %d, got = %d`, 2, reply.C)
 	}
 
 	// Div zero
-	args.A = proto.Int32(1)
-	args.B = proto.Int32(0)
+	args.A = 1
+	args.B = 0
 	if err = client.Call("ArithService.Div", &args, &reply); err.Error() != "divide by zero" {
 		t.Fatalf(`arith.Div: expected = "%s", got = "%s"`, "divide by zero", err.Error())
 	}
 
 	// Error
-	args.A = proto.Int32(1)
-	args.B = proto.Int32(2)
+	args.A = 1
+	args.B = 2
 	if err = client.Call("ArithService.Error", &args, &reply); err.Error() != "ArithError" {
 		t.Fatalf(`arith.Error: expected = "%s", got = "%s"`, "ArithError", err.Error())
 	}
@@ -120,12 +119,12 @@ func testEchoClient(t *testing.T, client *rpc.Client) {
 	var err error
 
 	// EchoService.Echo
-	args.Msg = proto.String("Hello, Protobuf-RPC")
+	args.Msg = "Hello, Protobuf-RPC"
 	if err = client.Call("EchoService.Echo", &args, &reply); err != nil {
 		t.Fatalf(`echo.Echo: %v`, err)
 	}
-	if reply.GetMsg() != args.GetMsg() {
-		t.Fatalf(`echo.Echo: expected = "%s", got = "%s"`, args.GetMsg(), reply.GetMsg())
+	if reply.Msg != args.Msg {
+		t.Fatalf(`echo.Echo: expected = "%s", got = "%s"`, args.Msg, reply.Msg)
 	}
 }
 
@@ -135,45 +134,45 @@ func testArithStub(t *testing.T, stub *ArithServiceClient) {
 	var err error
 
 	// Add
-	args.A = proto.Int32(1)
-	args.B = proto.Int32(2)
+	args.A = 1
+	args.B = 2
 	if reply, err = stub.Add(&args); err != nil {
 		t.Fatalf(`stub.Add: %v`, err)
 	}
-	if reply.GetC() != 3 {
-		t.Fatalf(`stub.Add: expected = %d, got = %d`, 3, reply.GetC())
+	if reply.C != 3 {
+		t.Fatalf(`stub.Add: expected = %d, got = %d`, 3, reply.C)
 	}
 
 	// Mul
-	args.A = proto.Int32(2)
-	args.B = proto.Int32(3)
+	args.A = 2
+	args.B = 3
 	if reply, err = stub.Mul(&args); err != nil {
 		t.Fatalf(`stub.Mul: %v`, err)
 	}
-	if reply.GetC() != 6 {
-		t.Fatalf(`stub.Mul: expected = %d, got = %d`, 6, reply.GetC())
+	if reply.C != 6 {
+		t.Fatalf(`stub.Mul: expected = %d, got = %d`, 6, reply.C)
 	}
 
 	// Div
-	args.A = proto.Int32(13)
-	args.B = proto.Int32(5)
+	args.A = 13
+	args.B = 5
 	if reply, err = stub.Div(&args); err != nil {
 		t.Fatalf(`stub.Div: %v`, err)
 	}
-	if reply.GetC() != 2 {
-		t.Fatalf(`stub.Div: expected = %d, got = %d`, 2, reply.GetC())
+	if reply.C != 2 {
+		t.Fatalf(`stub.Div: expected = %d, got = %d`, 2, reply.C)
 	}
 
 	// Div zero
-	args.A = proto.Int32(1)
-	args.B = proto.Int32(0)
+	args.A = 1
+	args.B = 0
 	if reply, err = stub.Div(&args); err.Error() != "divide by zero" {
 		t.Fatalf(`stub.Div: expected = "%s", got = "%s"`, "divide by zero", err.Error())
 	}
 
 	// Error
-	args.A = proto.Int32(1)
-	args.B = proto.Int32(2)
+	args.A = 1
+	args.B = 2
 	if reply, err = stub.Error(&args); err.Error() != "ArithError" {
 		t.Fatalf(`stub.Error: expected = "%s", got = "%s"`, "ArithError", err.Error())
 	}
@@ -184,11 +183,11 @@ func testEchoStub(t *testing.T, stub *EchoServiceClient) {
 	var err error
 
 	// EchoService.Echo
-	args.Msg = proto.String("Hello, Protobuf-RPC")
+	args.Msg = "Hello, Protobuf-RPC"
 	if reply, err = stub.Echo(&args); err != nil {
 		t.Fatalf(`stub.Echo: %v`, err)
 	}
-	if reply.GetMsg() != args.GetMsg() {
-		t.Fatalf(`stub.Echo: expected = "%s", got = "%s"`, args.GetMsg(), reply.GetMsg())
+	if reply.Msg != args.Msg {
+		t.Fatalf(`stub.Echo: expected = "%s", got = "%s"`, args.Msg, reply.Msg)
 	}
 }

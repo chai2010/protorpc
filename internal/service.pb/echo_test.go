@@ -11,8 +11,6 @@ import (
 	"sync"
 	"testing"
 	"unicode/utf8"
-
-	"github.com/golang/protobuf/proto"
 )
 
 var (
@@ -80,31 +78,31 @@ func testEchoService(t *testing.T, client *rpc.Client) {
 	var err error
 
 	// EchoService.EchoTwice
-	args.Msg = proto.String(echoRequest)
+	args.Msg = echoRequest
 	err = client.Call("EchoService.EchoTwice", &args, &reply)
 	if err != nil {
 		t.Fatalf(`EchoService.EchoTwice: %v`, err)
 	}
-	if reply.GetMsg() != echoResponse {
+	if reply.Msg != echoResponse {
 		t.Fatalf(
 			`EchoService.EchoTwice: expected = "%s", got = "%s"`,
-			echoResponse, reply.GetMsg(),
+			echoResponse, reply.Msg,
 		)
 	}
 
 	// EchoService.EchoTwice (Massive)
-	args.Msg = proto.String(echoMassiveRequest)
+	args.Msg = echoMassiveRequest
 	err = client.Call("EchoService.EchoTwice", &args, &reply)
 	if err != nil {
 		t.Fatalf(`EchoService.EchoTwice: %v`, err)
 	}
-	if reply.GetMsg() != echoMassiveResponse {
-		got := reply.GetMsg()
+	if reply.Msg != echoMassiveResponse {
+		got := reply.Msg
 		if len(got) > 8 {
 			got = got[:8] + "..."
 		}
 		t.Fatalf(`EchoService.EchoTwice: len = %d, got = %v`,
-			len(reply.GetMsg()), got,
+			len(reply.Msg), got,
 		)
 	}
 }
@@ -127,28 +125,28 @@ func TestClientSyncEcho(t *testing.T) {
 	var reply *EchoResponse
 
 	// EchoService.EchoTwice
-	args.Msg = proto.String("abc")
+	args.Msg = "abc"
 	reply, err = echoClient.EchoTwice(&args)
 	if err != nil {
 		t.Fatalf(`EchoService.EchoTwice: %v`, err)
 	}
-	if reply.GetMsg() != args.GetMsg()+args.GetMsg() {
+	if reply.Msg != args.Msg+args.Msg {
 		t.Fatalf(
 			`EchoService.EchoTwice: expected = "%s", got = "%s"`,
-			args.GetMsg()+args.GetMsg(), reply.GetMsg(),
+			args.Msg+args.Msg, reply.Msg,
 		)
 	}
 
 	// EchoService.EchoTwice
-	args.Msg = proto.String("你好, 世界")
+	args.Msg = "你好, 世界"
 	reply, err = echoClient.EchoTwice(&args)
 	if err != nil {
 		t.Fatalf(`EchoService.EchoTwice: %v`, err)
 	}
-	if reply.GetMsg() != args.GetMsg()+args.GetMsg() {
+	if reply.Msg != args.Msg+args.Msg {
 		t.Fatalf(
 			`EchoService.EchoTwice: expected = "%s", got = "%s"`,
-			args.GetMsg()+args.GetMsg(), reply.GetMsg(),
+			args.Msg+args.Msg, reply.Msg,
 		)
 	}
 }
@@ -171,34 +169,34 @@ func TestClientSyncMassive(t *testing.T) {
 	var reply *EchoResponse
 
 	// EchoService.EchoTwice
-	args.Msg = proto.String(echoMassiveRequest + "abc")
+	args.Msg = echoMassiveRequest + "abc"
 	reply, err = echoClient.EchoTwice(&args)
 	if err != nil {
 		t.Fatalf(`EchoService.EchoTwice: %v`, err)
 	}
-	if reply.GetMsg() != args.GetMsg()+args.GetMsg() {
-		got := reply.GetMsg()
+	if reply.Msg != args.Msg+args.Msg {
+		got := reply.Msg
 		if len(got) > 8 {
 			got = got[:8] + "..."
 		}
 		t.Fatalf(`EchoService.EchoTwice: len = %d, got = %v`,
-			len(reply.GetMsg()), got,
+			len(reply.Msg), got,
 		)
 	}
 
 	// EchoService.EchoTwice
-	args.Msg = proto.String(echoMassiveRequest + "你好, 世界")
+	args.Msg = echoMassiveRequest + "你好, 世界"
 	reply, err = echoClient.EchoTwice(&args)
 	if err != nil {
 		t.Fatalf(`EchoService.EchoTwice: %v`, err)
 	}
-	if reply.GetMsg() != args.GetMsg()+args.GetMsg() {
-		got := reply.GetMsg()
+	if reply.Msg != args.Msg+args.Msg {
+		got := reply.Msg
 		if len(got) > 8 {
 			got = got[:8] + "..."
 		}
 		t.Fatalf(`EchoService.EchoTwice: len = %d, got = %v`,
-			len(reply.GetMsg()), got,
+			len(reply.Msg), got,
 		)
 	}
 }
@@ -221,17 +219,17 @@ func TestClientAsyncEcho(t *testing.T) {
 	var reply EchoResponse
 
 	// EchoService.EchoTwice
-	args.Msg = proto.String(echoRequest)
+	args.Msg = echoRequest
 	call := client.Go("EchoService.EchoTwice", &args, &reply, nil)
 
 	call = <-call.Done
 	if call.Error != nil {
 		t.Fatalf(`EchoService.EchoTwice: %v`, call.Error)
 	}
-	if call.Reply.(*EchoResponse).GetMsg() != echoResponse {
+	if call.Reply.(*EchoResponse).Msg != echoResponse {
 		t.Fatalf(
 			`EchoService.EchoTwice: expected = "%s", got = "%s"`,
-			echoResponse, call.Reply.(*EchoResponse).GetMsg(),
+			echoResponse, call.Reply.(*EchoResponse).Msg,
 		)
 	}
 }
@@ -258,11 +256,11 @@ func TestClientAsyncEchoBatches(t *testing.T) {
 	var reply3 EchoResponse
 
 	// EchoService.EchoTwice
-	args1.Msg = proto.String("abc")
+	args1.Msg = "abc"
 	call1 := client.Go("EchoService.EchoTwice", &args1, &reply1, nil)
-	args2.Msg = proto.String("你好, 世界")
+	args2.Msg = "你好, 世界"
 	call2 := client.Go("EchoService.EchoTwice", &args2, &reply2, nil)
-	args3.Msg = proto.String("Hello, 世界")
+	args3.Msg = "Hello, 世界"
 	call3 := client.Go("EchoService.EchoTwice", &args3, &reply3, nil)
 
 	call1 = <-call1.Done
@@ -273,11 +271,11 @@ func TestClientAsyncEchoBatches(t *testing.T) {
 	if call1.Error != nil {
 		t.Fatalf(`EchoService.EchoTwice: %v`, call1.Error)
 	}
-	if call1.Reply.(*EchoResponse).GetMsg() != args1.GetMsg()+args1.GetMsg() {
+	if call1.Reply.(*EchoResponse).Msg != args1.Msg+args1.Msg {
 		t.Fatalf(
 			`EchoService.EchoTwice: expected = "%s", got = "%s"`,
-			args1.GetMsg()+args1.GetMsg(),
-			call1.Reply.(*EchoResponse).GetMsg(),
+			args1.Msg+args1.Msg,
+			call1.Reply.(*EchoResponse).Msg,
 		)
 	}
 
@@ -285,11 +283,11 @@ func TestClientAsyncEchoBatches(t *testing.T) {
 	if call2.Error != nil {
 		t.Fatalf(`EchoService.EchoTwice: %v`, call2.Error)
 	}
-	if call2.Reply.(*EchoResponse).GetMsg() != args2.GetMsg()+args2.GetMsg() {
+	if call2.Reply.(*EchoResponse).Msg != args2.Msg+args2.Msg {
 		t.Fatalf(
 			`EchoService.EchoTwice: expected = "%s", got = "%s"`,
-			args2.GetMsg()+args2.GetMsg(),
-			call2.Reply.(*EchoResponse).GetMsg(),
+			args2.Msg+args2.Msg,
+			call2.Reply.(*EchoResponse).Msg,
 		)
 	}
 
@@ -297,11 +295,11 @@ func TestClientAsyncEchoBatches(t *testing.T) {
 	if call3.Error != nil {
 		t.Fatalf(`EchoService.EchoTwice: %v`, call3.Error)
 	}
-	if call3.Reply.(*EchoResponse).GetMsg() != args3.GetMsg()+args3.GetMsg() {
+	if call3.Reply.(*EchoResponse).Msg != args3.Msg+args3.Msg {
 		t.Fatalf(
 			`EchoService.EchoTwice: expected = "%s", got = "%s"`,
-			args3.GetMsg()+args3.GetMsg(),
-			call3.Reply.(*EchoResponse).GetMsg(),
+			args3.Msg+args3.Msg,
+			call3.Reply.(*EchoResponse).Msg,
 		)
 	}
 }
@@ -324,20 +322,20 @@ func TestClientAsyncMassive(t *testing.T) {
 	var reply EchoResponse
 
 	// EchoService.EchoTwice
-	args.Msg = proto.String(echoMassiveRequest)
+	args.Msg = echoMassiveRequest
 	call := client.Go("EchoService.EchoTwice", &args, &reply, nil)
 
 	call = <-call.Done
 	if call.Error != nil {
 		t.Fatalf(`EchoService.EchoTwice: %v`, call.Error)
 	}
-	if call.Reply.(*EchoResponse).GetMsg() != echoMassiveResponse {
-		got := call.Reply.(*EchoResponse).GetMsg()
+	if call.Reply.(*EchoResponse).Msg != echoMassiveResponse {
+		got := call.Reply.(*EchoResponse).Msg
 		if len(got) > 8 {
 			got = got[:8] + "..."
 		}
 		t.Fatalf(`EchoService.EchoTwice: len = %d, got = %v`,
-			len(call.Reply.(*EchoResponse).GetMsg()), got,
+			len(call.Reply.(*EchoResponse).Msg), got,
 		)
 	}
 }
@@ -364,11 +362,11 @@ func TestClientAsyncMassiveBatches(t *testing.T) {
 	var reply3 EchoResponse
 
 	// EchoService.EchoTwice
-	args1.Msg = proto.String(echoMassiveRequest + "abc")
+	args1.Msg = echoMassiveRequest + "abc"
 	call1 := client.Go("EchoService.EchoTwice", &args1, &reply1, nil)
-	args2.Msg = proto.String(echoMassiveRequest + "你好, 世界")
+	args2.Msg = echoMassiveRequest + "你好, 世界"
 	call2 := client.Go("EchoService.EchoTwice", &args2, &reply2, nil)
-	args3.Msg = proto.String(echoMassiveRequest + "Hello, 世界")
+	args3.Msg = echoMassiveRequest + "Hello, 世界"
 	call3 := client.Go("EchoService.EchoTwice", &args3, &reply3, nil)
 
 	call1 = <-call1.Done
@@ -379,13 +377,13 @@ func TestClientAsyncMassiveBatches(t *testing.T) {
 	if call1.Error != nil {
 		t.Fatalf(`EchoService.EchoTwice: %v`, call1.Error)
 	}
-	if call1.Reply.(*EchoResponse).GetMsg() != args1.GetMsg()+args1.GetMsg() {
-		got := call1.Reply.(*EchoResponse).GetMsg()
+	if call1.Reply.(*EchoResponse).Msg != args1.Msg+args1.Msg {
+		got := call1.Reply.(*EchoResponse).Msg
 		if len(got) > 8 {
 			got = got[:8] + "..."
 		}
 		t.Fatalf(`EchoService.EchoTwice: len = %d, got = %v`,
-			len(call1.Reply.(*EchoResponse).GetMsg()), got,
+			len(call1.Reply.(*EchoResponse).Msg), got,
 		)
 	}
 
@@ -393,13 +391,13 @@ func TestClientAsyncMassiveBatches(t *testing.T) {
 	if call2.Error != nil {
 		t.Fatalf(`EchoService.EchoTwice: %v`, call2.Error)
 	}
-	if call2.Reply.(*EchoResponse).GetMsg() != args2.GetMsg()+args2.GetMsg() {
-		got := call2.Reply.(*EchoResponse).GetMsg()
+	if call2.Reply.(*EchoResponse).Msg != args2.Msg+args2.Msg {
+		got := call2.Reply.(*EchoResponse).Msg
 		if len(got) > 8 {
 			got = got[:8] + "..."
 		}
 		t.Fatalf(`EchoService.EchoTwice: len = %d, got = %v`,
-			len(call2.Reply.(*EchoResponse).GetMsg()), got,
+			len(call2.Reply.(*EchoResponse).Msg), got,
 		)
 	}
 
@@ -407,13 +405,13 @@ func TestClientAsyncMassiveBatches(t *testing.T) {
 	if call3.Error != nil {
 		t.Fatalf(`EchoService.EchoTwice: %v`, call3.Error)
 	}
-	if call3.Reply.(*EchoResponse).GetMsg() != args3.GetMsg()+args3.GetMsg() {
-		got := call3.Reply.(*EchoResponse).GetMsg()
+	if call3.Reply.(*EchoResponse).Msg != args3.Msg+args3.Msg {
+		got := call3.Reply.(*EchoResponse).Msg
 		if len(got) > 8 {
 			got = got[:8] + "..."
 		}
 		t.Fatalf(`EchoService.EchoTwice: len = %d, got = %v`,
-			len(call3.Reply.(*EchoResponse).GetMsg()), got,
+			len(call3.Reply.(*EchoResponse).Msg), got,
 		)
 	}
 }
@@ -438,41 +436,41 @@ func BenchmarkSyncEcho(b *testing.B) {
 		var reply *EchoResponse
 
 		// EchoService.EchoTwice
-		args.Msg = proto.String("abc")
+		args.Msg = "abc"
 		reply, err = echoClient.EchoTwice(&args)
 		if err != nil {
 			b.Fatalf(`EchoService.EchoTwice: %v`, err)
 		}
-		if reply.GetMsg() != args.GetMsg()+args.GetMsg() {
+		if reply.Msg != args.Msg+args.Msg {
 			b.Fatalf(
 				`EchoService.EchoTwice: expected = "%s", got = "%s"`,
-				args.GetMsg()+args.GetMsg(), reply.GetMsg(),
+				args.Msg+args.Msg, reply.Msg,
 			)
 		}
 
 		// EchoService.EchoTwice
-		args.Msg = proto.String("你好, 世界")
+		args.Msg = "你好, 世界"
 		reply, err = echoClient.EchoTwice(&args)
 		if err != nil {
 			b.Fatalf(`EchoService.EchoTwice: %v`, err)
 		}
-		if reply.GetMsg() != args.GetMsg()+args.GetMsg() {
+		if reply.Msg != args.Msg+args.Msg {
 			b.Fatalf(
 				`EchoService.EchoTwice: expected = "%s", got = "%s"`,
-				args.GetMsg()+args.GetMsg(), reply.GetMsg(),
+				args.Msg+args.Msg, reply.Msg,
 			)
 		}
 
 		// EchoService.EchoTwice
-		args.Msg = proto.String("Hello, 世界")
+		args.Msg = "Hello, 世界"
 		reply, err = echoClient.EchoTwice(&args)
 		if err != nil {
 			b.Fatalf(`EchoService.EchoTwice: %v`, err)
 		}
-		if reply.GetMsg() != args.GetMsg()+args.GetMsg() {
+		if reply.Msg != args.Msg+args.Msg {
 			b.Fatalf(
 				`EchoService.EchoTwice: expected = "%s", got = "%s"`,
-				args.GetMsg()+args.GetMsg(), reply.GetMsg(),
+				args.Msg+args.Msg, reply.Msg,
 			)
 		}
 	}
@@ -498,50 +496,50 @@ func BenchmarkSyncMassive(b *testing.B) {
 		var reply *EchoResponse
 
 		// EchoService.EchoTwice
-		args.Msg = proto.String(echoMassiveRequest + "abc")
+		args.Msg = echoMassiveRequest + "abc"
 		reply, err = echoClient.EchoTwice(&args)
 		if err != nil {
 			b.Fatalf(`EchoService.EchoTwice: %v`, err)
 		}
-		if reply.GetMsg() != args.GetMsg()+args.GetMsg() {
-			got := reply.GetMsg()
+		if reply.Msg != args.Msg+args.Msg {
+			got := reply.Msg
 			if len(got) > 8 {
 				got = got[:8] + "..."
 			}
 			b.Fatalf(`EchoService.EchoTwice: len = %d, got = %v`,
-				len(reply.GetMsg()), got,
+				len(reply.Msg), got,
 			)
 		}
 
 		// EchoService.EchoTwice
-		args.Msg = proto.String(echoMassiveRequest + "你好, 世界")
+		args.Msg = echoMassiveRequest + "你好, 世界"
 		reply, err = echoClient.EchoTwice(&args)
 		if err != nil {
 			b.Fatalf(`EchoService.EchoTwice: %v`, err)
 		}
-		if reply.GetMsg() != args.GetMsg()+args.GetMsg() {
-			got := reply.GetMsg()
+		if reply.Msg != args.Msg+args.Msg {
+			got := reply.Msg
 			if len(got) > 8 {
 				got = got[:8] + "..."
 			}
 			b.Fatalf(`EchoService.EchoTwice: len = %d, got = %v`,
-				len(reply.GetMsg()), got,
+				len(reply.Msg), got,
 			)
 		}
 
 		// EchoService.EchoTwice
-		args.Msg = proto.String(echoMassiveRequest + "Hello, 世界")
+		args.Msg = echoMassiveRequest + "Hello, 世界"
 		reply, err = echoClient.EchoTwice(&args)
 		if err != nil {
 			b.Fatalf(`EchoService.EchoTwice: %v`, err)
 		}
-		if reply.GetMsg() != args.GetMsg()+args.GetMsg() {
-			got := reply.GetMsg()
+		if reply.Msg != args.Msg+args.Msg {
+			got := reply.Msg
 			if len(got) > 8 {
 				got = got[:8] + "..."
 			}
 			b.Fatalf(`EchoService.EchoTwice: len = %d, got = %v`,
-				len(reply.GetMsg()), got,
+				len(reply.Msg), got,
 			)
 		}
 	}
@@ -571,11 +569,11 @@ func BenchmarkAsyncEcho(b *testing.B) {
 		var reply3 EchoResponse
 
 		// EchoService.EchoTwice
-		args1.Msg = proto.String("abc")
+		args1.Msg = "abc"
 		call1 := client.Go("EchoService.EchoTwice", &args1, &reply1, nil)
-		args2.Msg = proto.String("你好, 世界")
+		args2.Msg = "你好, 世界"
 		call2 := client.Go("EchoService.EchoTwice", &args2, &reply2, nil)
-		args3.Msg = proto.String("Hello, 世界")
+		args3.Msg = "Hello, 世界"
 		call3 := client.Go("EchoService.EchoTwice", &args3, &reply3, nil)
 
 		call1 = <-call1.Done
@@ -586,11 +584,11 @@ func BenchmarkAsyncEcho(b *testing.B) {
 		if call1.Error != nil {
 			b.Fatalf(`EchoService.EchoTwice: %v`, call1.Error)
 		}
-		if call1.Reply.(*EchoResponse).GetMsg() != args1.GetMsg()+args1.GetMsg() {
+		if call1.Reply.(*EchoResponse).Msg != args1.Msg+args1.Msg {
 			b.Fatalf(
 				`EchoService.EchoTwice: expected = "%s", got = "%s"`,
-				args1.GetMsg()+args1.GetMsg(),
-				call1.Reply.(*EchoResponse).GetMsg(),
+				args1.Msg+args1.Msg,
+				call1.Reply.(*EchoResponse).Msg,
 			)
 		}
 
@@ -598,11 +596,11 @@ func BenchmarkAsyncEcho(b *testing.B) {
 		if call2.Error != nil {
 			b.Fatalf(`EchoService.EchoTwice: %v`, call2.Error)
 		}
-		if call2.Reply.(*EchoResponse).GetMsg() != args2.GetMsg()+args2.GetMsg() {
+		if call2.Reply.(*EchoResponse).Msg != args2.Msg+args2.Msg {
 			b.Fatalf(
 				`EchoService.EchoTwice: expected = "%s", got = "%s"`,
-				args2.GetMsg()+args2.GetMsg(),
-				call2.Reply.(*EchoResponse).GetMsg(),
+				args2.Msg+args2.Msg,
+				call2.Reply.(*EchoResponse).Msg,
 			)
 		}
 
@@ -610,11 +608,11 @@ func BenchmarkAsyncEcho(b *testing.B) {
 		if call3.Error != nil {
 			b.Fatalf(`EchoService.EchoTwice: %v`, call3.Error)
 		}
-		if call3.Reply.(*EchoResponse).GetMsg() != args3.GetMsg()+args3.GetMsg() {
+		if call3.Reply.(*EchoResponse).Msg != args3.Msg+args3.Msg {
 			b.Fatalf(
 				`EchoService.EchoTwice: expected = "%s", got = "%s"`,
-				args3.GetMsg()+args3.GetMsg(),
-				call3.Reply.(*EchoResponse).GetMsg(),
+				args3.Msg+args3.Msg,
+				call3.Reply.(*EchoResponse).Msg,
 			)
 		}
 	}
@@ -644,11 +642,11 @@ func BenchmarkAsyncMassive(b *testing.B) {
 		var reply3 EchoResponse
 
 		// EchoService.EchoTwice
-		args1.Msg = proto.String(echoMassiveRequest + "abc")
+		args1.Msg = echoMassiveRequest + "abc"
 		call1 := client.Go("EchoService.EchoTwice", &args1, &reply1, nil)
-		args2.Msg = proto.String(echoMassiveRequest + "你好, 世界")
+		args2.Msg = echoMassiveRequest + "你好, 世界"
 		call2 := client.Go("EchoService.EchoTwice", &args2, &reply2, nil)
-		args3.Msg = proto.String(echoMassiveRequest + "Hello, 世界")
+		args3.Msg = echoMassiveRequest + "Hello, 世界"
 		call3 := client.Go("EchoService.EchoTwice", &args3, &reply3, nil)
 
 		call1 = <-call1.Done
@@ -659,13 +657,13 @@ func BenchmarkAsyncMassive(b *testing.B) {
 		if call1.Error != nil {
 			b.Fatalf(`EchoService.EchoTwice: %v`, call1.Error)
 		}
-		if call1.Reply.(*EchoResponse).GetMsg() != args1.GetMsg()+args1.GetMsg() {
-			got := call1.Reply.(*EchoResponse).GetMsg()
+		if call1.Reply.(*EchoResponse).Msg != args1.Msg+args1.Msg {
+			got := call1.Reply.(*EchoResponse).Msg
 			if len(got) > 8 {
 				got = got[:8] + "..."
 			}
 			b.Fatalf(`EchoService.EchoTwice: len = %d, got = %v`,
-				len(call1.Reply.(*EchoResponse).GetMsg()), got,
+				len(call1.Reply.(*EchoResponse).Msg), got,
 			)
 		}
 
@@ -673,13 +671,13 @@ func BenchmarkAsyncMassive(b *testing.B) {
 		if call2.Error != nil {
 			b.Fatalf(`EchoService.EchoTwice: %v`, call2.Error)
 		}
-		if call2.Reply.(*EchoResponse).GetMsg() != args2.GetMsg()+args2.GetMsg() {
-			got := call2.Reply.(*EchoResponse).GetMsg()
+		if call2.Reply.(*EchoResponse).Msg != args2.Msg+args2.Msg {
+			got := call2.Reply.(*EchoResponse).Msg
 			if len(got) > 8 {
 				got = got[:8] + "..."
 			}
 			b.Fatalf(`EchoService.EchoTwice: len = %d, got = %v`,
-				len(call2.Reply.(*EchoResponse).GetMsg()), got,
+				len(call2.Reply.(*EchoResponse).Msg), got,
 			)
 		}
 
@@ -687,13 +685,13 @@ func BenchmarkAsyncMassive(b *testing.B) {
 		if call3.Error != nil {
 			b.Fatalf(`EchoService.EchoTwice: %v`, call3.Error)
 		}
-		if call3.Reply.(*EchoResponse).GetMsg() != args3.GetMsg()+args3.GetMsg() {
-			got := call3.Reply.(*EchoResponse).GetMsg()
+		if call3.Reply.(*EchoResponse).Msg != args3.Msg+args3.Msg {
+			got := call3.Reply.(*EchoResponse).Msg
 			if len(got) > 8 {
 				got = got[:8] + "..."
 			}
 			b.Fatalf(`EchoService.EchoTwice: len = %d, got = %v`,
-				len(call3.Reply.(*EchoResponse).GetMsg()), got,
+				len(call3.Reply.(*EchoResponse).Msg), got,
 			)
 		}
 	}

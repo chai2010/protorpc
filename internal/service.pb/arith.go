@@ -6,27 +6,25 @@ package service
 
 import (
 	"errors"
-
-	"github.com/golang/protobuf/proto"
 )
 
 type Arith int
 
 func (t *Arith) Add(args *ArithRequest, reply *ArithResponse) error {
-	reply.C = proto.Int32(args.GetA() + args.GetB())
+	reply.C = args.A + args.B
 	return nil
 }
 
 func (t *Arith) Mul(args *ArithRequest, reply *ArithResponse) error {
-	reply.C = proto.Int32(args.GetA() * args.GetB())
+	reply.C = args.A * args.B
 	return nil
 }
 
 func (t *Arith) Div(args *ArithRequest, reply *ArithResponse) error {
-	if args.GetB() == 0 {
+	if args.B == 0 {
 		return errors.New("divide by zero")
 	}
-	reply.C = proto.Int32(args.GetA() / args.GetB())
+	reply.C = args.A / args.B
 	return nil
 }
 

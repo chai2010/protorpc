@@ -21,36 +21,20 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 type EchoRequest struct {
-	Msg              *string `protobuf:"bytes,1,opt,name=msg" json:"msg,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
+	Msg string `protobuf:"bytes,1,opt,name=msg" json:"msg,omitempty"`
 }
 
 func (m *EchoRequest) Reset()         { *m = EchoRequest{} }
 func (m *EchoRequest) String() string { return proto.CompactTextString(m) }
 func (*EchoRequest) ProtoMessage()    {}
 
-func (m *EchoRequest) GetMsg() string {
-	if m != nil && m.Msg != nil {
-		return *m.Msg
-	}
-	return ""
-}
-
 type EchoResponse struct {
-	Msg              *string `protobuf:"bytes,1,opt,name=msg" json:"msg,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
+	Msg string `protobuf:"bytes,1,opt,name=msg" json:"msg,omitempty"`
 }
 
 func (m *EchoResponse) Reset()         { *m = EchoResponse{} }
 func (m *EchoResponse) String() string { return proto.CompactTextString(m) }
 func (*EchoResponse) ProtoMessage()    {}
-
-func (m *EchoResponse) GetMsg() string {
-	if m != nil && m.Msg != nil {
-		return *m.Msg
-	}
-	return ""
-}
 
 type EchoService interface {
 	Echo(in *EchoRequest, out *EchoResponse) error
