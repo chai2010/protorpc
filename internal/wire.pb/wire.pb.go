@@ -65,7 +65,6 @@ type ResponseHeader struct {
 	RawResponseLen              uint32 `protobuf:"varint,3,opt,name=raw_response_len" json:"raw_response_len,omitempty"`
 	SnappyCompressedResponseLen uint32 `protobuf:"varint,4,opt,name=snappy_compressed_response_len" json:"snappy_compressed_response_len,omitempty"`
 	Checksum                    uint32 `protobuf:"varint,5,opt,name=checksum" json:"checksum,omitempty"`
-	ErrorCode                   int32  `protobuf:"varint,6,opt,name=error_code" json:"error_code,omitempty"`
 }
 
 func (m *ResponseHeader) Reset()         { *m = ResponseHeader{} }
