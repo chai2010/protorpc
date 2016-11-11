@@ -27,13 +27,13 @@ Install `protoc-gen-go` plugin:
 
 1. install `protoc` at first: http://github.com/google/protobuf/releases
 2. `go get github.com/chai2010/protorpc/protoc-gen-go`
-3. `go generate github.com/chai2010/protorpc/internal/service.pb`
-4. `go test github.com/chai2010/protorpc/internal/service.pb`
+3. `go generate github.com/chai2010/protorpc/examples/service.pb`
+4. `go test github.com/chai2010/protorpc/examples/service.pb`
 
 
 # Examples
 
-First, create [echo.proto](https://github.com/chai2010/protorpc/blob/master/internal/service.pb/echo.proto):
+First, create [echo.proto](https://github.com/chai2010/protorpc/blob/master/examples/service.pb/echo.proto):
 
 ```Proto
 syntax = "proto3";
@@ -54,8 +54,8 @@ service EchoService {
 }
 ```
 
-Second, generate [echo.pb.go](https://github.com/chai2010/protorpc/blob/master/internal/service.pb/echo.pb.go)
-from [echo.proto](https://github.com/chai2010/protorpc/blob/master/internal/service.pb/echo.proto) (we can use `go generate` to invoke this command, see [proto.go](https://github.com/chai2010/protorpc/blob/master/internal/service.pb/proto.go)).
+Second, generate [echo.pb.go](https://github.com/chai2010/protorpc/blob/master/examples/service.pb/echo.pb.go)
+from [echo.proto](https://github.com/chai2010/protorpc/blob/master/examples/service.pb/echo.proto) (we can use `go generate` to invoke this command, see [proto.go](https://github.com/chai2010/protorpc/blob/master/examples/service.pb/proto.go)).
 
 	protoc --go_out=plugins=protorpc:. echo.proto
 
@@ -70,7 +70,7 @@ import (
 	"log"
 
 	"github.com/chai2010/protorpc"
-	service "github.com/chai2010/protorpc/internal/service.pb"
+	service "github.com/chai2010/protorpc/examples/service.pb"
 )
 
 type Echo int
@@ -121,7 +121,7 @@ func main() {
 }
 ```
 
-[More examples](internal).
+[More examples](examples).
 
 # BUGS
 

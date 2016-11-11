@@ -11,7 +11,7 @@ import (
 	"log"
 
 	"github.com/chai2010/protorpc"
-	service "github.com/chai2010/protorpc/internal/service.pb"
+	service "github.com/chai2010/protorpc/examples/service.pb"
 )
 
 type Echo int
