@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/chai2010/protorpc"
-	msg "github.com/chai2010/protorpc/internal/message.pb"
+	msg "github.com/chai2010/protorpc/examples/message.pb"
 )
 
 type Arith int
