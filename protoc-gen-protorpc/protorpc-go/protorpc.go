@@ -2,15 +2,17 @@
 // Use of this source code is governed by a Apache
 // license that can be found in the LICENSE file.
 
-package main
+package protorpc_plugin
 
 import (
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
 	"github.com/golang/protobuf/protoc-gen-go/generator"
+
+	"github.com/chai2010/protorpc/protoc-gen-protorpc/plugin"
 )
 
 func init() {
-	RegisterCodeGenerator(nil)
+	plugin.RegisterCodeGenerator(nil)
 }
 
 type protorpcCodeGenerator struct {
