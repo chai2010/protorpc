@@ -108,10 +108,27 @@ func (c *EchoServiceClient) Echo(in *Message) (out *Message, err error) {
 	if in == nil {
 		in = new(Message)
 	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
 	out = new(Message)
 	if err = c.Call("EchoService.Echo", in, out); err != nil {
 		return nil, err
 	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
 	return out, nil
 }
 

@@ -256,10 +256,27 @@ func (c *{{.ServiceName}}Client) {{.MethodName}}(in *{{.ArgsType}}) (out *{{.Rep
 	if in == nil {
 		in = new({{.ArgsType}})
 	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
 	out = new({{.ReplyType}})
 	if err = c.Call("{{.ServiceRegisterName}}.{{.MethodName}}", in, out); err != nil {
 		return nil, err
 	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
 	return out, nil
 }
 

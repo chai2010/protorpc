@@ -111,10 +111,27 @@ func (c *ArithServiceClient) Add(in *ArithRequest) (out *ArithResponse, err erro
 	if in == nil {
 		in = new(ArithRequest)
 	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
 	out = new(ArithResponse)
 	if err = c.Call("ArithService.Add", in, out); err != nil {
 		return nil, err
 	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
 	return out, nil
 }
 
@@ -133,10 +150,27 @@ func (c *ArithServiceClient) Mul(in *ArithRequest) (out *ArithResponse, err erro
 	if in == nil {
 		in = new(ArithRequest)
 	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
 	out = new(ArithResponse)
 	if err = c.Call("ArithService.Mul", in, out); err != nil {
 		return nil, err
 	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
 	return out, nil
 }
 
@@ -155,10 +189,27 @@ func (c *ArithServiceClient) Div(in *ArithRequest) (out *ArithResponse, err erro
 	if in == nil {
 		in = new(ArithRequest)
 	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
 	out = new(ArithResponse)
 	if err = c.Call("ArithService.Div", in, out); err != nil {
 		return nil, err
 	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
 	return out, nil
 }
 
@@ -177,10 +228,27 @@ func (c *ArithServiceClient) Error(in *ArithRequest) (out *ArithResponse, err er
 	if in == nil {
 		in = new(ArithRequest)
 	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
 	out = new(ArithResponse)
 	if err = c.Call("ArithService.Error", in, out); err != nil {
 		return nil, err
 	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
 	return out, nil
 }
 
