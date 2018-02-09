@@ -115,6 +115,18 @@ func (c *EchoServiceClient) Echo(in *EchoRequest) (out *EchoResponse, err error)
 	}
 	return out, nil
 }
+
+func (c *EchoServiceClient) AsyncEcho(in *EchoRequest, out *EchoResponse, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(EchoRequest)
+	}
+	return c.Go(
+		"EchoService.Echo",
+		in, out,
+		done,
+	)
+}
+
 func (c *EchoServiceClient) EchoTwice(in *EchoRequest) (out *EchoResponse, err error) {
 	if in == nil {
 		in = new(EchoRequest)
@@ -124,6 +136,17 @@ func (c *EchoServiceClient) EchoTwice(in *EchoRequest) (out *EchoResponse, err e
 		return nil, err
 	}
 	return out, nil
+}
+
+func (c *EchoServiceClient) AsyncEchoTwice(in *EchoRequest, out *EchoResponse, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(EchoRequest)
+	}
+	return c.Go(
+		"EchoService.EchoTwice",
+		in, out,
+		done,
+	)
 }
 
 // DialEchoService connects to an EchoService at the specified network address.

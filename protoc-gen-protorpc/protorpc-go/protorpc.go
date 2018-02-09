@@ -261,7 +261,19 @@ func (c *{{.ServiceName}}Client) {{.MethodName}}(in *{{.ArgsType}}) (out *{{.Rep
 		return nil, err
 	}
 	return out, nil
-}`
+}
+
+func (c *{{.ServiceName}}Client) Async{{.MethodName}}(in *{{.ArgsType}}, out *{{.ReplyType}}, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new({{.ArgsType}})
+	}
+	return c.Go(
+		"{{.ServiceRegisterName}}.{{.MethodName}}",
+		in, out,
+		done,
+	)
+}  
+`
 
 	// gen client method list
 	var methodList string

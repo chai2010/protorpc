@@ -117,6 +117,18 @@ func (c *ArithServiceClient) Add(in *ArithRequest) (out *ArithResponse, err erro
 	}
 	return out, nil
 }
+
+func (c *ArithServiceClient) AsyncAdd(in *ArithRequest, out *ArithResponse, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(ArithRequest)
+	}
+	return c.Go(
+		"ArithService.Add",
+		in, out,
+		done,
+	)
+}
+
 func (c *ArithServiceClient) Mul(in *ArithRequest) (out *ArithResponse, err error) {
 	if in == nil {
 		in = new(ArithRequest)
@@ -127,6 +139,18 @@ func (c *ArithServiceClient) Mul(in *ArithRequest) (out *ArithResponse, err erro
 	}
 	return out, nil
 }
+
+func (c *ArithServiceClient) AsyncMul(in *ArithRequest, out *ArithResponse, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(ArithRequest)
+	}
+	return c.Go(
+		"ArithService.Mul",
+		in, out,
+		done,
+	)
+}
+
 func (c *ArithServiceClient) Div(in *ArithRequest) (out *ArithResponse, err error) {
 	if in == nil {
 		in = new(ArithRequest)
@@ -137,6 +161,18 @@ func (c *ArithServiceClient) Div(in *ArithRequest) (out *ArithResponse, err erro
 	}
 	return out, nil
 }
+
+func (c *ArithServiceClient) AsyncDiv(in *ArithRequest, out *ArithResponse, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(ArithRequest)
+	}
+	return c.Go(
+		"ArithService.Div",
+		in, out,
+		done,
+	)
+}
+
 func (c *ArithServiceClient) Error(in *ArithRequest) (out *ArithResponse, err error) {
 	if in == nil {
 		in = new(ArithRequest)
@@ -146,6 +182,17 @@ func (c *ArithServiceClient) Error(in *ArithRequest) (out *ArithResponse, err er
 		return nil, err
 	}
 	return out, nil
+}
+
+func (c *ArithServiceClient) AsyncError(in *ArithRequest, out *ArithResponse, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(ArithRequest)
+	}
+	return c.Go(
+		"ArithService.Error",
+		in, out,
+		done,
+	)
 }
 
 // DialArithService connects to an ArithService at the specified network address.

@@ -115,6 +115,17 @@ func (c *EchoServiceClient) Echo(in *Message) (out *Message, err error) {
 	return out, nil
 }
 
+func (c *EchoServiceClient) AsyncEcho(in *Message, out *Message, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(Message)
+	}
+	return c.Go(
+		"EchoService.Echo",
+		in, out,
+		done,
+	)
+}
+
 // DialEchoService connects to an EchoService at the specified network address.
 func DialEchoService(network, addr string) (*EchoServiceClient, error) {
 	c, err := protorpc.Dial(network, addr)
