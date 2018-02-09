@@ -21,14 +21,15 @@
 Install `protorpc` package:
 
 1. `go get github.com/chai2010/protorpc`
-2. `go run hello.go`
+1. `go run hello.go`
 
 Install `protoc-gen-go` plugin:
 
 1. install `protoc` at first: http://github.com/google/protobuf/releases
-2. `go get github.com/chai2010/protorpc/protoc-gen-go`
-3. `go generate github.com/chai2010/protorpc/examples/service.pb`
-4. `go test github.com/chai2010/protorpc/examples/service.pb`
+1. `go get github.com/golang/protobuf/protoc-gen-go`
+1. `go get github.com/chai2010/protorpc/protoc-gen-protorpc`
+1. `go generate github.com/chai2010/protorpc/examples/service.pb`
+1. `go test github.com/chai2010/protorpc/examples/service.pb`
 
 
 # Examples
@@ -57,7 +58,8 @@ service EchoService {
 Second, generate [echo.pb.go](https://github.com/chai2010/protorpc/blob/master/examples/service.pb/echo.pb.go)
 from [echo.proto](https://github.com/chai2010/protorpc/blob/master/examples/service.pb/echo.proto) (we can use `go generate` to invoke this command, see [proto.go](https://github.com/chai2010/protorpc/blob/master/examples/service.pb/proto.go)).
 
-	protoc --go_out=plugins=protorpc:. echo.proto
+	protoc --go_out=. echo.proto
+	protoc --protorpc_out=. echo.proto
 
 
 Now, we can use the stub code like this:
