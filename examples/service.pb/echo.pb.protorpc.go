@@ -94,6 +94,15 @@ func ListenAndServeEchoService(network, addr string, x EchoService) error {
 	}
 }
 
+// ServeEchoService serves the given EchoService implementation.
+func ServeEchoService(conn io.ReadWriteCloser, x EchoService) {
+	srv := rpc.NewServer()
+	if err := srv.RegisterName("EchoService", x); err != nil {
+		log.Fatal(err)
+	}
+	srv.ServeCodec(protorpc.NewServerCodec(conn))
+}
+
 type EchoServiceClient struct {
 	*rpc.Client
 }
