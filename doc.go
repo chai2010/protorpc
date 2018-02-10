@@ -14,7 +14,7 @@ you must be running version 2.3 or higher.
 Finally run
 
 	go get github.com/chai2010/protorpc
-	go get github.com/chai2010/protorpc/protoc-gen-go
+	go get github.com/chai2010/protorpc/protoc-gen-protorpc
 
 to install the support library and protocol compiler.
 
@@ -38,9 +38,14 @@ Here is a simple proto file("arith.pb/arith.proto"):
 		rpc divide (ArithRequest) returns (ArithResponse);
 	}
 
-Then use "protoc-gen-go" to generate "arith.pb.go" file(include rpc stub):
+Then use "protoc-gen-go" to generate "arith.pb.go" file:
 
-	cd arith.pb && protoc --go_out=plugins=protorpc:. arith.proto
+	cd arith.pb && protoc --go_out=. arith.proto
+
+
+Use "protoc-gen-protorpc" to generate "arith.pb.protorpc.go" file (include stub code):
+
+	cd arith.pb && protoc --protorpc_out=. arith.proto
 
 The server calls (for TCP service):
 
