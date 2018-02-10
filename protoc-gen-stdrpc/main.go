@@ -199,6 +199,15 @@ func ListenAndServe{{.ServiceName}}(network, addr string, x {{.ServiceName}}) er
 		go srv.ServeConn(conn)
 	}
 }
+
+// Serve{{.ServiceName}} serves the given {{.ServiceName}} implementation.
+func Serve{{.ServiceName}}(conn io.ReadWriteCloser, x {{.ServiceName}}) {
+	srv := rpc.NewServer()
+	if err := srv.RegisterName("{{.ServiceRegisterName}}", x); err != nil {
+		log.Fatal(err)
+	}
+	srv.ServeConn(conn)
+}
 `
 	{
 		out := bytes.NewBuffer([]byte{})

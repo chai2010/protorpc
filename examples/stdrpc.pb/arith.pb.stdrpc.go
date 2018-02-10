@@ -94,6 +94,15 @@ func ListenAndServeArithService(network, addr string, x ArithService) error {
 	}
 }
 
+// ServeArithService serves the given ArithService implementation.
+func ServeArithService(conn io.ReadWriteCloser, x ArithService) {
+	srv := rpc.NewServer()
+	if err := srv.RegisterName("ArithService", x); err != nil {
+		log.Fatal(err)
+	}
+	srv.ServeConn(conn)
+}
+
 type ArithServiceClient struct {
 	*rpc.Client
 }
