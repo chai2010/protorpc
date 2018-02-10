@@ -125,6 +125,35 @@ func main() {
 
 [More examples](examples).
 
+# standard net/rpc
+
+First, create [echo.proto](examples/stdrpc.pb/echo.proto):
+
+```Proto
+syntax = "proto3";
+
+package service;
+
+message EchoRequest {
+	string msg = 1;
+}
+
+message EchoResponse {
+	string msg = 1;
+}
+
+service EchoService {
+	rpc Echo (EchoRequest) returns (EchoResponse);
+	rpc EchoTwice (EchoRequest) returns (EchoResponse);
+}
+```
+
+Second, generate [echo.pb.go](examples/stdrpc.pb/echo.pb.go) and [echo.pb.stdrpc.go](examples/stdrpc.pb/echo.pb.stdrpc.go)
+from [echo.proto](examples/stdrpc.pb/echo.proto).
+
+	protoc --go_out=. echo.proto
+	protoc --stdrpc_out=. echo.proto
+
 # BUGS
 
 Report bugs to <chaishushan@gmail.com>.
