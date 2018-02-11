@@ -16,8 +16,8 @@ type CodeGenerator interface {
 	FileNameExt() string
 
 	HeaderCode(g *generator.Generator, file *generator.FileDescriptor) string
-	ServiceCode(p *generator.Generator, file *generator.FileDescriptor, svc *descriptor.ServiceDescriptorProto) string
-	MessageCode(p *generator.Generator, file *generator.FileDescriptor, msg *descriptor.DescriptorProto) string
+	ServiceCode(g *generator.Generator, file *generator.FileDescriptor, svc *descriptor.ServiceDescriptorProto) string
+	MessageCode(g *generator.Generator, file *generator.FileDescriptor, msg *descriptor.DescriptorProto) string
 }
 
 func RegisterCodeGenerator(g CodeGenerator) {

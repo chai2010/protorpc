@@ -32,8 +32,8 @@ func Main() {
 }
 
 func pkgGenerateAllFiles(g *generator.Generator, plugin *mainPlugin) {
-	// set default plugins: protorpc
-	// protoc --qingcloud_out=plugin=golang:. x.proto
+	// set default plugins
+	// protoc --xxx_out=. x.proto
 	plugin.InitService(pkgGetUserPlugin(g))
 
 	// parse command line parameters
@@ -48,7 +48,7 @@ func pkgGenerateAllFiles(g *generator.Generator, plugin *mainPlugin) {
 
 	g.GenerateAllFiles()
 
-	// skip non *.pb.protorpc.go
+	// skip non *.pb.xxx.go
 	respFileList := g.Response.File[:0]
 	for _, file := range g.Response.File {
 		fileName := file.GetName()
@@ -96,7 +96,7 @@ func pkgGetUserPlugin(g *generator.Generator) CodeGenerator {
 
 	userPlugin := getCodeGenerator(userPluginName)
 	if userPlugin == nil {
-		log.Print("protoc-gen-protorpc: registor plugins:", getAllServiceGeneratorNames())
+		log.Print("protoc-gen-plugin: registor plugins:", getAllServiceGeneratorNames())
 		g.Fail("invalid plugin option:", userPluginName)
 	}
 
