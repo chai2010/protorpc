@@ -13,7 +13,6 @@ import (
 	"strings"
 
 	"github.com/golang/protobuf/proto"
-	"github.com/golang/protobuf/protoc-gen-go/descriptor"
 	"github.com/golang/protobuf/protoc-gen-go/generator"
 	plugin "github.com/golang/protobuf/protoc-gen-go/plugin"
 )
@@ -120,46 +119,4 @@ func (p *mainPlugin) goPackageOption(file *generator.FileDescriptor) (impPath, p
 	}
 	impPath, pkg = impPath[:sc], impPath[sc+1:]
 	return
-}
-
-var pkgCodeGeneratorList []CodeGenerator
-
-type CodeGenerator interface {
-	Name() string
-	FileNameExt() string
-
-	HeaderCode(g *generator.Generator, file *generator.FileDescriptor) string
-	ServiceCode(p *generator.Generator, file *generator.FileDescriptor, svc *descriptor.ServiceDescriptorProto) string
-	MessageCode(p *generator.Generator, file *generator.FileDescriptor, msg *descriptor.DescriptorProto) string
-}
-
-func RegisterCodeGenerator(g CodeGenerator) {
-	pkgCodeGeneratorList = append(pkgCodeGeneratorList, g)
-}
-
-func getAllCodeGenerator() []CodeGenerator {
-	return pkgCodeGeneratorList
-}
-
-func getAllServiceGeneratorNames() (names []string) {
-	for _, g := range pkgCodeGeneratorList {
-		names = append(names, g.Name())
-	}
-	return
-}
-
-func getFirstServiceGeneratorName() string {
-	if len(pkgCodeGeneratorList) > 0 {
-		return pkgCodeGeneratorList[0].Name()
-	}
-	return ""
-}
-
-func getCodeGenerator(name string) CodeGenerator {
-	for _, g := range pkgCodeGeneratorList {
-		if g.Name() == name {
-			return g
-		}
-	}
-	return nil
 }
