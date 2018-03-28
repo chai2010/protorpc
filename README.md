@@ -127,7 +127,12 @@ func main() {
 
 # standard net/rpc
 
-First, create [echo.proto](examples/stdrpc.pb/echo.proto):
+First, install [protoc-gen-protorpc](github.com/chai2010/protorpc/protoc-gen-protorpc) plugin:
+
+- `go get github.com/chai2010/protorpc/protoc-gen-protorpc`
+
+
+Then create [echo.proto](examples/stdrpc.pb/echo.proto):
 
 ```Proto
 syntax = "proto3";
