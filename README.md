@@ -148,10 +148,8 @@ service EchoService {
 }
 ```
 
-Second, generate [echo.pb.go](examples/stdrpc.pb/echo.pb.go) and [echo.pb.stdrpc.go](examples/stdrpc.pb/echo.pb.stdrpc.go)
-from [echo.proto](examples/stdrpc.pb/echo.proto).
+Second, generate [echo.pb.go](examples/stdrpc.pb/echo.pb.go) from [echo.proto](examples/stdrpc.pb/echo.proto) with `protoc-gen-stdrpc` plugin.
 
-	protoc --go_out=. echo.proto
 	protoc --stdrpc_out=. echo.proto
 
 The stdrpc plugin generated code do not depends **protorpc** package, it use gob as the default rpc encoding.
