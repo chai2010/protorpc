@@ -20,9 +20,13 @@ import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
+import "bufio"
+import "crypto/tls"
+import "errors"
 import "io"
 import "log"
 import "net"
+import "net/http"
 import "net/rpc"
 import "time"
 
@@ -145,6 +149,15 @@ func ListenAndServeArithService(network, addr string, x ArithService) error {
 		}
 		go srv.ServeConn(conn)
 	}
+}
+
+// ServeArithService serves the given ArithService implementation.
+func ServeArithService(conn io.ReadWriteCloser, x ArithService) {
+	srv := rpc.NewServer()
+	if err := srv.RegisterName("service.ArithService", x); err != nil {
+		log.Fatal(err)
+	}
+	srv.ServeConn(conn)
 }
 
 type ArithServiceClient struct {
@@ -314,6 +327,61 @@ func DialArithServiceTimeout(network, addr string, timeout time.Duration) (*Arit
 		return nil, err
 	}
 	return &ArithServiceClient{rpc.NewClient(conn)}, nil
+}
+
+// DialArithServiceHTTP connects to an HTTP RPC server at the specified network address
+// listening on the default HTTP RPC path.
+func DialArithServiceHTTP(network, address string) (*ArithServiceClient, error) {
+	return DialArithServiceHTTPPath(network, address, rpc.DefaultRPCPath)
+}
+
+// DialArithServiceHTTPPath connects to an HTTP RPC server
+// at the specified network address and path.
+func DialArithServiceHTTPPath(network, address, path string) (*ArithServiceClient, error) {
+	conn, err := net.Dial(network, address)
+	if err != nil {
+		return nil, err
+	}
+	return dialArithServicePath(network, address, path, conn)
+}
+
+// DialArithServiceHTTPS connects to an HTTPS RPC server at the specified network address
+// listening on the default HTTP RPC path.
+func DialArithServiceHTTPS(network, address string, tlsConfig *tls.Config) (*ArithServiceClient, error) {
+	return DialArithServiceHTTPSPath(network, address, rpc.DefaultRPCPath, tlsConfig)
+}
+
+// DialArithServiceHTTPSPath connects to an HTTPS RPC server
+// at the specified network address and path.
+func DialArithServiceHTTPSPath(network, address, path string, tlsConfig *tls.Config) (*ArithServiceClient, error) {
+	conn, err := tls.Dial(network, address, tlsConfig)
+	if err != nil {
+		return nil, err
+	}
+	return dialArithServicePath(network, address, path, conn)
+}
+
+func dialArithServicePath(network, address, path string, conn net.Conn) (*ArithServiceClient, error) {
+	const net_rpc_connected = "200 Connected to Go RPC"
+
+	io.WriteString(conn, "CONNECT "+path+" HTTP/1.0\n\n")
+
+	// Require successful HTTP response
+	// before switching to RPC protocol.
+	resp, err := http.ReadResponse(bufio.NewReader(conn), &http.Request{Method: "CONNECT"})
+	if err == nil && resp.Status == net_rpc_connected {
+		return &ArithServiceClient{rpc.NewClient(conn)}, nil
+	}
+	if err == nil {
+		err = errors.New("unexpected HTTP response: " + resp.Status)
+	}
+	conn.Close()
+	return nil, &net.OpError{
+		Op:   "dial-http",
+		Net:  network + " " + address,
+		Addr: nil,
+		Err:  err,
+	}
 }
 
 func init() { proto.RegisterFile("arith.proto", fileDescriptor0) }

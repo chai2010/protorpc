@@ -7,9 +7,13 @@ import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
+import "bufio"
+import "crypto/tls"
+import "errors"
 import "io"
 import "log"
 import "net"
+import "net/http"
 import "net/rpc"
 import "time"
 
@@ -118,6 +122,15 @@ func ListenAndServeEchoService(network, addr string, x EchoService) error {
 	}
 }
 
+// ServeEchoService serves the given EchoService implementation.
+func ServeEchoService(conn io.ReadWriteCloser, x EchoService) {
+	srv := rpc.NewServer()
+	if err := srv.RegisterName("service.EchoService", x); err != nil {
+		log.Fatal(err)
+	}
+	srv.ServeConn(conn)
+}
+
 type EchoServiceClient struct {
 	*rpc.Client
 }
@@ -215,6 +228,61 @@ func DialEchoServiceTimeout(network, addr string, timeout time.Duration) (*EchoS
 		return nil, err
 	}
 	return &EchoServiceClient{rpc.NewClient(conn)}, nil
+}
+
+// DialEchoServiceHTTP connects to an HTTP RPC server at the specified network address
+// listening on the default HTTP RPC path.
+func DialEchoServiceHTTP(network, address string) (*EchoServiceClient, error) {
+	return DialEchoServiceHTTPPath(network, address, rpc.DefaultRPCPath)
+}
+
+// DialEchoServiceHTTPPath connects to an HTTP RPC server
+// at the specified network address and path.
+func DialEchoServiceHTTPPath(network, address, path string) (*EchoServiceClient, error) {
+	conn, err := net.Dial(network, address)
+	if err != nil {
+		return nil, err
+	}
+	return dialEchoServicePath(network, address, path, conn)
+}
+
+// DialEchoServiceHTTPS connects to an HTTPS RPC server at the specified network address
+// listening on the default HTTP RPC path.
+func DialEchoServiceHTTPS(network, address string, tlsConfig *tls.Config) (*EchoServiceClient, error) {
+	return DialEchoServiceHTTPSPath(network, address, rpc.DefaultRPCPath, tlsConfig)
+}
+
+// DialEchoServiceHTTPSPath connects to an HTTPS RPC server
+// at the specified network address and path.
+func DialEchoServiceHTTPSPath(network, address, path string, tlsConfig *tls.Config) (*EchoServiceClient, error) {
+	conn, err := tls.Dial(network, address, tlsConfig)
+	if err != nil {
+		return nil, err
+	}
+	return dialEchoServicePath(network, address, path, conn)
+}
+
+func dialEchoServicePath(network, address, path string, conn net.Conn) (*EchoServiceClient, error) {
+	const net_rpc_connected = "200 Connected to Go RPC"
+
+	io.WriteString(conn, "CONNECT "+path+" HTTP/1.0\n\n")
+
+	// Require successful HTTP response
+	// before switching to RPC protocol.
+	resp, err := http.ReadResponse(bufio.NewReader(conn), &http.Request{Method: "CONNECT"})
+	if err == nil && resp.Status == net_rpc_connected {
+		return &EchoServiceClient{rpc.NewClient(conn)}, nil
+	}
+	if err == nil {
+		err = errors.New("unexpected HTTP response: " + resp.Status)
+	}
+	conn.Close()
+	return nil, &net.OpError{
+		Op:   "dial-http",
+		Net:  network + " " + address,
+		Addr: nil,
+		Err:  err,
+	}
 }
 
 func init() { proto.RegisterFile("echo.proto", fileDescriptor1) }
