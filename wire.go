@@ -14,6 +14,11 @@ import (
 	"github.com/golang/snappy"
 )
 
+var (
+	UseSappy             = true
+	UseCrc32ChecksumIEEE = true
+)
+
 func maxUint32(a, b uint32) uint32 {
 	if a > b {
 		return a
@@ -42,6 +47,14 @@ func writeRequest(w io.Writer, id uint64, method string, request proto.Message) 
 		RawRequestLen:              uint32(len(pbRequest)),
 		SnappyCompressedRequestLen: uint32(len(compressedPbRequest)),
 		Checksum:                   crc32.ChecksumIEEE(compressedPbRequest),
+	}
+
+	if !UseSappy {
+		header.SnappyCompressedRequestLen = 0
+		compressedPbRequest = pbRequest
+	}
+	if !UseCrc32ChecksumIEEE {
+		header.Checksum = 0
 	}
 
 	// check header size
@@ -92,18 +105,25 @@ func readRequestBody(r io.Reader, header *wire.RequestHeader, request proto.Mess
 	}
 
 	// checksum
-	if crc32.ChecksumIEEE(compressedPbRequest) != header.Checksum {
-		return fmt.Errorf("protorpc.readRequestBody: unexpected checksum.")
+	if header.Checksum != 0 {
+		if crc32.ChecksumIEEE(compressedPbRequest) != header.Checksum {
+			return fmt.Errorf("protorpc.readRequestBody: unexpected checksum.")
+		}
 	}
 
-	// decode the compressed data
-	pbRequest, err := snappy.Decode(nil, compressedPbRequest)
-	if err != nil {
-		return err
-	}
-	// check wire header: rawMsgLen
-	if uint32(len(pbRequest)) != header.RawRequestLen {
-		return fmt.Errorf("protorpc.readRequestBody: Unexcpeted header.RawRequestLen.")
+	var pbRequest []byte
+	if header.SnappyCompressedRequestLen != 0 {
+		// decode the compressed data
+		pbRequest, err = snappy.Decode(nil, compressedPbRequest)
+		if err != nil {
+			return err
+		}
+		// check wire header: rawMsgLen
+		if uint32(len(pbRequest)) != header.RawRequestLen {
+			return fmt.Errorf("protorpc.readRequestBody: Unexcpeted header.RawRequestLen.")
+		}
+	} else {
+		pbRequest = compressedPbRequest
 	}
 
 	// Unmarshal to proto message
@@ -142,6 +162,14 @@ func writeResponse(w io.Writer, id uint64, serr string, response proto.Message) 
 		RawResponseLen:              uint32(len(pbResponse)),
 		SnappyCompressedResponseLen: uint32(len(compressedPbResponse)),
 		Checksum:                    crc32.ChecksumIEEE(compressedPbResponse),
+	}
+
+	if !UseSappy {
+		header.SnappyCompressedResponseLen = 0
+		compressedPbResponse = pbResponse
+	}
+	if !UseCrc32ChecksumIEEE {
+		header.Checksum = 0
 	}
 
 	// check header size
@@ -189,18 +217,25 @@ func readResponseBody(r io.Reader, header *wire.ResponseHeader, response proto.M
 	}
 
 	// checksum
-	if crc32.ChecksumIEEE(compressedPbResponse) != header.Checksum {
-		return fmt.Errorf("protorpc.readResponseBody: unexpected checksum.")
+	if header.Checksum != 0 {
+		if crc32.ChecksumIEEE(compressedPbResponse) != header.Checksum {
+			return fmt.Errorf("protorpc.readResponseBody: unexpected checksum.")
+		}
 	}
 
-	// decode the compressed data
-	pbResponse, err := snappy.Decode(nil, compressedPbResponse)
-	if err != nil {
-		return err
-	}
-	// check wire header: rawMsgLen
-	if uint32(len(pbResponse)) != header.RawResponseLen {
-		return fmt.Errorf("protorpc.readResponseBody: Unexcpeted header.RawResponseLen.")
+	var pbResponse []byte
+	if header.SnappyCompressedResponseLen != 0 {
+		// decode the compressed data
+		pbResponse, err = snappy.Decode(nil, compressedPbResponse)
+		if err != nil {
+			return err
+		}
+		// check wire header: rawMsgLen
+		if uint32(len(pbResponse)) != header.RawResponseLen {
+			return fmt.Errorf("protorpc.readResponseBody: Unexcpeted header.RawResponseLen.")
+		}
+	} else {
+		pbResponse = compressedPbResponse
 	}
 
 	// Unmarshal to proto message
