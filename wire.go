@@ -14,6 +14,13 @@ import (
 	"github.com/golang/snappy"
 )
 
+func maxUint32(a, b uint32) uint32 {
+	if a > b {
+		return a
+	}
+	return b
+}
+
 func writeRequest(w io.Writer, id uint64, method string, request proto.Message) error {
 	// marshal request
 	pbRequest := []byte{}
@@ -61,7 +68,7 @@ func writeRequest(w io.Writer, id uint64, method string, request proto.Message) 
 
 func readRequestHeader(r io.Reader, header *wire.RequestHeader) (err error) {
 	// recv header (more)
-	pbHeader, err := recvFrame(r)
+	pbHeader, err := recvFrame(r, int(wire.Const_MAX_REQUEST_HEADER_LEN))
 	if err != nil {
 		return err
 	}
@@ -76,8 +83,10 @@ func readRequestHeader(r io.Reader, header *wire.RequestHeader) (err error) {
 }
 
 func readRequestBody(r io.Reader, header *wire.RequestHeader, request proto.Message) error {
+	maxBodyLen := maxUint32(header.RawRequestLen, header.SnappyCompressedRequestLen)
+
 	// recv body (end)
-	compressedPbRequest, err := recvFrame(r)
+	compressedPbRequest, err := recvFrame(r, int(maxBodyLen))
 	if err != nil {
 		return err
 	}
@@ -156,7 +165,7 @@ func writeResponse(w io.Writer, id uint64, serr string, response proto.Message) 
 
 func readResponseHeader(r io.Reader, header *wire.ResponseHeader) error {
 	// recv header (more)
-	pbHeader, err := recvFrame(r)
+	pbHeader, err := recvFrame(r, int(wire.Const_MAX_REQUEST_HEADER_LEN))
 	if err != nil {
 		return err
 	}
@@ -171,8 +180,10 @@ func readResponseHeader(r io.Reader, header *wire.ResponseHeader) error {
 }
 
 func readResponseBody(r io.Reader, header *wire.ResponseHeader, response proto.Message) error {
+	maxBodyLen := int(maxUint32(header.RawResponseLen, header.SnappyCompressedResponseLen))
+
 	// recv body (end)
-	compressedPbResponse, err := recvFrame(r)
+	compressedPbResponse, err := recvFrame(r, maxBodyLen)
 	if err != nil {
 		return err
 	}

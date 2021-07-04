@@ -7,6 +7,7 @@ package protorpc
 import (
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 )
@@ -34,10 +35,15 @@ func sendFrame(w io.Writer, data []byte) (err error) {
 	return
 }
 
-func recvFrame(r io.Reader) (data []byte, err error) {
+func recvFrame(r io.Reader, maxSize int) (data []byte, err error) {
 	size, err := readUvarint(r)
 	if err != nil {
 		return nil, err
+	}
+	if maxSize > 0 {
+		if int(size) > maxSize {
+			return nil, fmt.Errorf("protorpc: varint overflows maxSize(%d)", maxSize)
+		}
 	}
 	if size != 0 {
 		data = make([]byte, size)
