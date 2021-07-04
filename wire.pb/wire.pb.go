@@ -64,7 +64,7 @@ var Const_name = map[int32]string{
 	1024: "MAX_REQUEST_HEADER_LEN",
 }
 var Const_value = map[string]int32{
-	"ZERO": 0,
+	"ZERO":                   0,
 	"MAX_REQUEST_HEADER_LEN": 1024,
 }
 

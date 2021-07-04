@@ -7,12 +7,15 @@ package main
 import (
 	"bytes"
 	"log"
+	"os"
 	"text/template"
 
 	plugin "github.com/chai2010/protorpc/protoc-gen-plugin"
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
 	"github.com/golang/protobuf/protoc-gen-go/generator"
 )
+
+var flagPrefix = os.Getenv(ENV_PROTOC_GEN_PROTORPC_FLAG_PREFIX)
 
 func main() {
 	plugin.Main()
@@ -69,11 +72,13 @@ var (
 	t := template.Must(template.New("").Parse(tmpl))
 	err := t.Execute(&buf,
 		struct {
-			G    *generator.Generator
-			File *generator.FileDescriptor
+			G      *generator.Generator
+			File   *generator.FileDescriptor
+			Prefix string
 		}{
-			G:    g,
-			File: file,
+			G:      g,
+			File:   file,
+			Prefix: flagPrefix,
 		},
 	)
 	if err != nil {
@@ -101,7 +106,7 @@ func (p *protorpcPlugin) genServiceInterface(
 	svc *descriptor.ServiceDescriptorProto,
 ) string {
 	const serviceInterfaceTmpl = `
-type {{.ServiceName}} interface {
+type {{.Prefix}}{{.ServiceName}} interface {
 	{{.CallMethodList}}
 }
 `
@@ -113,7 +118,14 @@ type {{.ServiceName}} interface {
 	for _, m := range svc.Method {
 		out := bytes.NewBuffer([]byte{})
 		t := template.Must(template.New("").Parse(callMethodTmpl))
-		t.Execute(out, &struct{ ServiceName, MethodName, ArgsType, ReplyType string }{
+		t.Execute(out, &struct {
+			Prefix      string
+			ServiceName string
+			MethodName  string
+			ArgsType    string
+			ReplyType   string
+		}{
+			Prefix:      flagPrefix,
 			ServiceName: generator.CamelCase(svc.GetName()),
 			MethodName:  generator.CamelCase(m.GetName()),
 			ArgsType:    g.TypeName(g.ObjectNamed(m.GetInputType())),
@@ -129,7 +141,12 @@ type {{.ServiceName}} interface {
 	{
 		out := bytes.NewBuffer([]byte{})
 		t := template.Must(template.New("").Parse(serviceInterfaceTmpl))
-		t.Execute(out, &struct{ ServiceName, CallMethodList string }{
+		t.Execute(out, &struct {
+			Prefix         string
+			ServiceName    string
+			CallMethodList string
+		}{
+			Prefix:         flagPrefix,
 			ServiceName:    generator.CamelCase(svc.GetName()),
 			CallMethodList: callMethodList,
 		})
@@ -144,10 +161,10 @@ func (p *protorpcPlugin) genServiceServer(
 	svc *descriptor.ServiceDescriptorProto,
 ) string {
 	const serviceHelperFunTmpl = `
-// Accept{{.ServiceName}}Client accepts connections on the listener and serves requests
+// {{.Prefix}}Accept{{.ServiceName}}Client accepts connections on the listener and serves requests
 // for each incoming connection.  Accept blocks; the caller typically
 // invokes it in a go statement.
-func Accept{{.ServiceName}}Client(lis net.Listener, x {{.ServiceName}}) {
+func {{.Prefix}}Accept{{.ServiceName}}Client(lis net.Listener, x {{.Prefix}}{{.ServiceName}}) {
 	srv := rpc.NewServer()
 	if err := srv.RegisterName("{{.ServiceRegisterName}}", x); err != nil {
 		log.Fatal(err)
@@ -162,16 +179,16 @@ func Accept{{.ServiceName}}Client(lis net.Listener, x {{.ServiceName}}) {
 	}
 }
 
-// Register{{.ServiceName}} publish the given {{.ServiceName}} implementation on the server.
-func Register{{.ServiceName}}(srv *rpc.Server, x {{.ServiceName}}) error {
+// {{.Prefix}}Register{{.ServiceName}} publish the given {{.Prefix}}{{.ServiceName}} implementation on the server.
+func {{.Prefix}}Register{{.ServiceName}}(srv *rpc.Server, x {{.Prefix}}{{.ServiceName}}) error {
 	if err := srv.RegisterName("{{.ServiceRegisterName}}", x); err != nil {
 		return err
 	}
 	return nil
 }
 
-// New{{.ServiceName}}Server returns a new {{.ServiceName}} Server.
-func New{{.ServiceName}}Server(x {{.ServiceName}}) *rpc.Server {
+// {{.Prefix}}New{{.ServiceName}}Server returns a new {{.Prefix}}{{.ServiceName}} Server.
+func {{.Prefix}}New{{.ServiceName}}Server(x {{.Prefix}}{{.ServiceName}}) *rpc.Server {
 	srv := rpc.NewServer()
 	if err := srv.RegisterName("{{.ServiceRegisterName}}", x); err != nil {
 		log.Fatal(err)
@@ -179,9 +196,9 @@ func New{{.ServiceName}}Server(x {{.ServiceName}}) *rpc.Server {
 	return srv
 }
 
-// ListenAndServe{{.ServiceName}} listen announces on the local network address laddr
+// {{.Prefix}}ListenAndServe{{.ServiceName}} listen announces on the local network address laddr
 // and serves the given {{.ServiceName}} implementation.
-func ListenAndServe{{.ServiceName}}(network, addr string, x {{.ServiceName}}) error {
+func {{.Prefix}}ListenAndServe{{.ServiceName}}(network, addr string, x {{.Prefix}}{{.ServiceName}}) error {
 	lis, err := net.Listen(network, addr)
 	if err != nil {
 		return err
@@ -202,8 +219,8 @@ func ListenAndServe{{.ServiceName}}(network, addr string, x {{.ServiceName}}) er
 	}
 }
 
-// Serve{{.ServiceName}} serves the given {{.ServiceName}} implementation.
-func Serve{{.ServiceName}}(conn io.ReadWriteCloser, x {{.ServiceName}}) {
+// {{.Prefix}}Serve{{.ServiceName}} serves the given {{.Prefix}}{{.ServiceName}} implementation.
+func {{.Prefix}}Serve{{.ServiceName}}(conn io.ReadWriteCloser, x {{.Prefix}}{{.ServiceName}}) {
 	srv := rpc.NewServer()
 	if err := srv.RegisterName("{{.ServiceRegisterName}}", x); err != nil {
 		log.Fatal(err)
@@ -214,7 +231,13 @@ func Serve{{.ServiceName}}(conn io.ReadWriteCloser, x {{.ServiceName}}) {
 	{
 		out := bytes.NewBuffer([]byte{})
 		t := template.Must(template.New("").Parse(serviceHelperFunTmpl))
-		t.Execute(out, &struct{ PackageName, ServiceName, ServiceRegisterName string }{
+		t.Execute(out, &struct {
+			Prefix              string
+			PackageName         string
+			ServiceName         string
+			ServiceRegisterName string
+		}{
+			Prefix:      flagPrefix,
 			PackageName: file.GetPackage(),
 			ServiceName: generator.CamelCase(svc.GetName()),
 			ServiceRegisterName: p.makeServiceRegisterName(
@@ -232,39 +255,39 @@ func (p *protorpcPlugin) genServiceClient(
 	svc *descriptor.ServiceDescriptorProto,
 ) string {
 	const clientHelperFuncTmpl = `
-type {{.ServiceName}}Client struct {
+type {{.Prefix}}{{.ServiceName}}Client struct {
 	*rpc.Client
 }
 
-// New{{.ServiceName}}Client returns a {{.ServiceName}} stub to handle
-// requests to the set of {{.ServiceName}} at the other end of the connection.
-func New{{.ServiceName}}Client(conn io.ReadWriteCloser) (*{{.ServiceName}}Client) {
+// {{.Prefix}}New{{.ServiceName}}Client returns a {{.Prefix}}{{.ServiceName}} stub to handle
+// requests to the set of {{.Prefix}}{{.ServiceName}} at the other end of the connection.
+func {{.Prefix}}New{{.ServiceName}}Client(conn io.ReadWriteCloser) (*{{.Prefix}}{{.ServiceName}}Client) {
 	c := rpc.NewClientWithCodec(protorpc.NewClientCodec(conn))
-	return &{{.ServiceName}}Client{c}
+	return &{{.Prefix}}{{.ServiceName}}Client{c}
 }
 
 {{.MethodList}}
 
-// Dial{{.ServiceName}} connects to an {{.ServiceName}} at the specified network address.
-func Dial{{.ServiceName}}(network, addr string) (*{{.ServiceName}}Client, error) {
+// {{.Prefix}}Dial{{.ServiceName}} connects to an {{.Prefix}}{{.ServiceName}} at the specified network address.
+func {{.Prefix}}Dial{{.ServiceName}}(network, addr string) (*{{.Prefix}}{{.ServiceName}}Client, error) {
 	c, err := protorpc.Dial(network, addr)
 	if err != nil {
 		return nil, err
 	}
-	return &{{.ServiceName}}Client{c}, nil
+	return &{{.Prefix}}{{.ServiceName}}Client{c}, nil
 }
 
-// Dial{{.ServiceName}}Timeout connects to an {{.ServiceName}} at the specified network address.
-func Dial{{.ServiceName}}Timeout(network, addr string, timeout time.Duration) (*{{.ServiceName}}Client, error) {
+// {{.Prefix}}Dial{{.ServiceName}}Timeout connects to an {{.Prefix}}{{.ServiceName}} at the specified network address.
+func {{.Prefix}}Dial{{.ServiceName}}Timeout(network, addr string, timeout time.Duration) (*{{.Prefix}}{{.ServiceName}}Client, error) {
 	c, err := protorpc.DialTimeout(network, addr, timeout)
 	if err != nil {
 		return nil, err
 	}
-	return &{{.ServiceName}}Client{c}, nil
+	return &{{.Prefix}}{{.ServiceName}}Client{c}, nil
 }
 `
 	const clientMethodTmpl = `
-func (c *{{.ServiceName}}Client) {{.MethodName}}(in *{{.ArgsType}}) (out *{{.ReplyType}}, err error) {
+func (c *{{.Prefix}}{{.ServiceName}}Client) {{.MethodName}}(in *{{.ArgsType}}) (out *{{.ReplyType}}, err error) {
 	if in == nil {
 		in = new({{.ArgsType}})
 	}
@@ -292,7 +315,7 @@ func (c *{{.ServiceName}}Client) {{.MethodName}}(in *{{.ArgsType}}) (out *{{.Rep
 	return out, nil
 }
 
-func (c *{{.ServiceName}}Client) Async{{.MethodName}}(in *{{.ArgsType}}, out *{{.ReplyType}}, done chan *rpc.Call) *rpc.Call {
+func (c *{{.Prefix}}{{.ServiceName}}Client) Async{{.MethodName}}(in *{{.ArgsType}}, out *{{.ReplyType}}, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
 		in = new({{.ArgsType}})
 	}
@@ -309,7 +332,15 @@ func (c *{{.ServiceName}}Client) Async{{.MethodName}}(in *{{.ArgsType}}, out *{{
 	for _, m := range svc.Method {
 		out := bytes.NewBuffer([]byte{})
 		t := template.Must(template.New("").Parse(clientMethodTmpl))
-		t.Execute(out, &struct{ ServiceName, ServiceRegisterName, MethodName, ArgsType, ReplyType string }{
+		t.Execute(out, &struct {
+			Prefix              string
+			ServiceName         string
+			ServiceRegisterName string
+			MethodName          string
+			ArgsType            string
+			ReplyType           string
+		}{
+			Prefix:      flagPrefix,
 			ServiceName: generator.CamelCase(svc.GetName()),
 			ServiceRegisterName: p.makeServiceRegisterName(
 				file, file.GetPackage(), generator.CamelCase(svc.GetName()),
@@ -325,7 +356,13 @@ func (c *{{.ServiceName}}Client) Async{{.MethodName}}(in *{{.ArgsType}}, out *{{
 	{
 		out := bytes.NewBuffer([]byte{})
 		t := template.Must(template.New("").Parse(clientHelperFuncTmpl))
-		t.Execute(out, &struct{ PackageName, ServiceName, MethodList string }{
+		t.Execute(out, &struct {
+			Prefix      string
+			PackageName string
+			ServiceName string
+			MethodList  string
+		}{
+			Prefix:      flagPrefix,
 			PackageName: file.GetPackage(),
 			ServiceName: generator.CamelCase(svc.GetName()),
 			MethodList:  methodList,

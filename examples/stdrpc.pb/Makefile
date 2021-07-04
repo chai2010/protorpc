@@ -5,6 +5,7 @@
 PROTO_FILES=$(sort $(wildcard ./*.proto))
 
 default: $(PROTO_FILES) Makefile
+	go install github.com/golang/protobuf/protoc-gen-go
 	go install github.com/chai2010/protorpc/protoc-gen-stdrpc
 	protoc --stdrpc_out=. ${PROTO_FILES}
 	go test

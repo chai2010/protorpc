@@ -25,6 +25,7 @@
 
 Install `protorpc` package:
 
+1. `go install github.com/golang/protobuf/protoc-gen-go`
 1. `go get github.com/chai2010/protorpc`
 1. `go run hello.go`
 
@@ -158,6 +159,12 @@ Second, generate [echo.pb.go](examples/stdrpc.pb/echo.pb.go) from [echo.proto](e
 	protoc --stdrpc_out=. echo.proto
 
 The stdrpc plugin generated code do not depends **protorpc** package, it use gob as the default rpc encoding.
+
+# Add prefix
+
+```
+$ ENV_PROTOC_GEN_PROTORPC_FLAG_PREFIX=abc protoc --protorpc_out=. x.proto
+```
 
 # BUGS
 
