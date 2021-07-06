@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	UseSappy             = true
+	UseSnappy            = true
 	UseCrc32ChecksumIEEE = true
 )
 
@@ -49,7 +49,7 @@ func writeRequest(w io.Writer, id uint64, method string, request proto.Message) 
 		Checksum:                   crc32.ChecksumIEEE(compressedPbRequest),
 	}
 
-	if !UseSappy {
+	if !UseSnappy {
 		header.SnappyCompressedRequestLen = 0
 		compressedPbRequest = pbRequest
 	}
@@ -164,7 +164,7 @@ func writeResponse(w io.Writer, id uint64, serr string, response proto.Message) 
 		Checksum:                    crc32.ChecksumIEEE(compressedPbResponse),
 	}
 
-	if !UseSappy {
+	if !UseSnappy {
 		header.SnappyCompressedResponseLen = 0
 		compressedPbResponse = pbResponse
 	}
