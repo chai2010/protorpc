@@ -1,5 +1,9 @@
 # Changelogs
 
+## 1.1.1 - 2021.7.4
+
+- protoc-gen-plugin: ignore format error
+
 ## 1.1.0 - 2021.7.4
 
 - add `UseSappy` and `UseCrc32ChecksumIEEE`

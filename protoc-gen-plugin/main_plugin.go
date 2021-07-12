@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"fmt"
 	"go/format"
-	"log"
 	"path"
 	"strings"
 
@@ -60,9 +59,7 @@ func (p *mainPlugin) Generate(file *generator.FileDescriptor) {
 	}
 
 	fileContent := buf.String()
-	if code, err := format.Source(buf.Bytes()); err != nil {
-		log.Printf("mainPlugin.Generate: format %q failed, err = %v", file.GetName(), err)
-	} else {
+	if code, err := format.Source(buf.Bytes()); err == nil {
 		fileContent = string(code)
 	}
 
