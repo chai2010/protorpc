@@ -81,7 +81,7 @@ func writeRequest(w io.Writer, id uint64, method string, request proto.Message) 
 
 func readRequestHeader(r io.Reader, header *wire.RequestHeader) (err error) {
 	// recv header (more)
-	pbHeader, err := recvFrame(r, 0)
+	pbHeader, err := recvFrame(r, int(wire.Const_MAX_REQUEST_HEADER_LEN))
 	if err != nil {
 		return err
 	}
@@ -193,7 +193,7 @@ func writeResponse(w io.Writer, id uint64, serr string, response proto.Message) 
 
 func readResponseHeader(r io.Reader, header *wire.ResponseHeader) error {
 	// recv header (more)
-	pbHeader, err := recvFrame(r, int(wire.Const_MAX_REQUEST_HEADER_LEN))
+	pbHeader, err := recvFrame(r, 0)
 	if err != nil {
 		return err
 	}
